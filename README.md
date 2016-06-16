@@ -29,7 +29,7 @@ A story heavy and atmospheric roguelike. To add to replayability the story will 
 
 ...
 
-10%   - Crafting
+10%   - Crafting, ritual based magic system
 
 20%   - First version of story generator
 
