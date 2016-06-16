@@ -3,7 +3,7 @@ Made using Ruby and BearLibTerminal library.
 
 ### Installation:
 You will need to have one of the newer versions of Ruby installed and fiddle and rbconfig gems.
-Simply put all files into one directory and put the font file (terminus12x12.png) into fonts subdirectory.
+Simply put all files into one directory and put the font file (terminal12x12.png) into fonts subdirectory.
 
 Then run in terminal: ruby main.rb
 
