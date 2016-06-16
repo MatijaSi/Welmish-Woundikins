@@ -1,4 +1,4 @@
-# Welmish-Woundikins
+# Welmish-Woundikins 0.0.1
 Made using Ruby and BearLibTerminal library.
 
 ### Installation:
