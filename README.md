@@ -1,6 +1,11 @@
 # Welmish-Woundikins 1%
 Made using Ruby and Curses.
 
+### Please note:
+This is very early alpha, so there are some things you have to do to use it successfully:
+1. Make sure the terminal in which you run the game is big enough (otherwise menus won't show)
+2. Mapgen takes a lot of time, so be patient.
+
 ### Installation:
 You will need to have one of the newer versions of Ruby installed and maybe the curses gem.
 Put all files into one directory. Then run in terminal: ruby main.rb
