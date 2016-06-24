@@ -95,7 +95,7 @@ module Creatures
 		end
 		
 		def state(view)
-			view.draw(0, 0, "Name: #{@name}")
+			view.draw(0, 0, "#{@name}")
 			view.draw(0, 1, "x: #{@x}")
 			view.draw(0, 2, "y: #{@y}")
 			view.draw(0, 4, "health: #{@hp}")

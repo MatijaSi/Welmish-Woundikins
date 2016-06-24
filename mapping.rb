@@ -66,33 +66,20 @@ module Mapping
 			cut_x = @size[0] / 2 
 			
 			#create two maps, they should only generate ground tiles
-			map1 = GroundMap.new(0, 0, cut_x, @size[1])
+			map1 = DungeonMap.new(0, 0, cut_x, @size[1])
 			map1.populate
 			
-			map2 = GroundMap.new(cut_x + 5, 0, @size[0], @size[1])
+			map2 = DungeonMap.new(cut_x, 0, @size[0], @size[1])
 			map2.populate
 			
 			#connect maps with corridors
 			tile1 = map1.tiles.sample
 			tile2 = map2.tiles.sample
-			x1 = tile1.x
-			y1 = tile1.y
-			x2 = tile2.x
-			y2 = tile2.y
 			
-			if rand(1..6) > 3 #create horizontal corridor first
-				h_corridor = HorizontalCorridor.new(x1, y1, x2, y1)
-				v_corridor = VerticalCorridor.new(x2, y1, x2, y2)
-			else #vertical first
-				v_corridor = VerticalCorridor.new(x1, y1, x1, y2)
-				h_corridor = HorizontalCorridor.new(x1, y2, x2, y2)
-			end
-			
-			h_corridor.populate
-			v_corridor.populate
+			corridors = Mapping.connect_with_corridors(tile1, tile2)
 			
 			#combine them into map
-			@tiles = map1.tiles + map2.tiles + h_corridor.tiles + v_corridor.tiles
+			@tiles = map1.tiles + map2.tiles + corridors[0].tiles + corridors[1].tiles
 			
 			ptile = @tiles.sample
 			pcoords = [ptile.x, ptile.y]
@@ -168,11 +155,13 @@ module Mapping
 		end
 	end
 	
-	class VerticalCorridor < Map
+	class Room < GroundMap
 		def draw
 			nil
 		end
-		
+	end
+	
+	class VerticalCorridor < Room
 		def populate
 			if @begin[1] < @size[1]
 				y = @begin[1]
@@ -190,11 +179,7 @@ module Mapping
 		end
 	end
 
-	class HorizontalCorridor < Map
-		def draw
-			nil
-		end
-		
+	class HorizontalCorridor < Room
 		def populate
 			if @begin[0] < @size[0]
 				x = @begin[0]
@@ -212,10 +197,69 @@ module Mapping
 		end
 	end
 	
+	def self.connect_with_corridors(tile1, tile2)
+		x1 = tile1.x
+		y1 = tile1.y
+		x2 = tile2.x
+		y2 = tile2.y
+			
+		if rand(1..6) > 3 #create horizontal corridor first
+			h_corridor = HorizontalCorridor.new(x1, y1, x2, y1)
+			v_corridor = VerticalCorridor.new(x2, y1, x2, y2)
+		else #vertical first
+			v_corridor = VerticalCorridor.new(x1, y1, x1, y2)
+			h_corridor = HorizontalCorridor.new(x1, y2, x2, y2)
+		end
+		
+		h_corridor.populate
+		v_corridor.populate
+			
+		return [h_corridor, v_corridor]
+	end
+	
 	class DrunkardWalkMap < Map #map generated with drunkard walk alghoritm
 	end
 	
 	class DungeonMap < Map #map of corridors and rooms
+		def populate
+			borders = [@begin[0], @begin[1], @size[0], @size[1]]
+			x = rand(borders[0]..(borders[2] - 30))
+			y = rand(borders[1]..(borders[3] - 30))
+			
+			rooms = []
+			corridors = []
+			rooms.push(Room.new(x, y, x + rand(5..8), y + rand(3..4)))
+			
+			until x > borders[2] || x < borders[0] || y > borders[3] || y < borders[1]
+				if rand(3..6) > 3
+					x += rand(12..15)
+				elsif rand(3..6) > 2
+					y += rand(12..15)
+				else
+					x += rand(12..15)
+					y += rand(12..15)
+				end
+				
+				rooms.push(Room.new(x, y, x + rand(5..8), y + rand(3..4)))
+			end
+			
+			rooms.each {|room| room.populate}
+				
+			i = 1
+			while i < rooms.size
+				tile1 = rooms[i - 1].tiles.sample
+				tile2 = rooms[i].tiles.sample
+				ncorridors = Mapping.connect_with_corridors(tile1, tile2)
+				corridors.push(ncorridors[0])
+				corridors.push(ncorridors[1])
+				i += 1
+			end
+			
+			corridors.each {|corridor| corridor.populate}
+			
+			rooms.each {|room| @tiles += room.tiles}
+			corridors.each {|corridor| @tiles += corridor.tiles}
+		end
 	end
 	
 	class AutomataMap < Map #map generated using celular automata

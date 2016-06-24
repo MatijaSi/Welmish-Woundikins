@@ -17,7 +17,7 @@ $status_view = Output::StatusView.new(0, MAIN_SIZE[1], STATUS_SIZE[0], STATUS_SI
 $player_view = Output::View.new(MAIN_SIZE[0], 0, PLAYER_SIZE[0], PLAYER_SIZE[1])
 
 #generate map
-$map = Mapping::Map.new(0, 0, 24, 24)
+$map = Mapping::Map.new(0, 0, 100, 100)
 coords = $map.populate
 
 #generate player
