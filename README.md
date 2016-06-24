@@ -10,7 +10,7 @@ It should work on Linux, however if it doesn't, make sure you have ncurses insta
 Nethack keys to move and attack, for up-left move/attack you can use either y or z.
 
 ### Implemented:
-Simple map generator with sectors partly implemented, simplest combat, FoV, death.
+Simple map generator with sectors partly implemented, simplest combat, naive FoV, death.
 
 ### Goals:
 A story heavy and atmospheric roguelike. To add to replayability the story will be procedurally generated. Atmosphere will be mostly present through short descriptions of creatures, items, map features...
