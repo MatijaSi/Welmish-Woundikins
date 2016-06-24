@@ -1,20 +1,19 @@
-# Welmish-Woundikins 1%
-Made using Ruby and BearLibTerminal library.
+# Welmish-Woundikins 0.5%
+Made using Ruby and Curses.
 
 ### Installation:
-You will need to have one of the newer versions of Ruby installed and fiddle and rbconfig gems.
-Simply put all files into one directory and put the font file (terminal12x12.png) into fonts subdirectory.
-
-Then run in terminal: ruby main.rb
+You will need to have one of the newer versions of Ruby installed and maybe the curses gem.
+Put all files into one directory. Then run in terminal: ruby main.rb
+It should work on Linux, however if it doesn't, make sure you have ncurses installed. It wasn't tested on the other systems.
 
 ### Controls:
-Nethack keys to move.
+Nethack keys to move and attack, for up-left move/attack you can use either y or z.
 
 ### Implemented:
-Simple map generator, simple combat.
+Simple map generator with sectors partly implemented, simplest combat, FoV, death.
 
 ### Goals:
-A story heavy and atmospheric roguelike. To add to replayability the story will be procedurally generated. Atmosphere will be mostly present through short descriptions of creatures, map features... (these will also be generated).
+A story heavy and atmospheric roguelike. To add to replayability the story will be procedurally generated. Atmosphere will be mostly present through short descriptions of creatures, items, map features...
 
 ### Version goals:
 1%   - Basic movement and combat, simple map generator, player can die, simple FoV.
