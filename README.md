@@ -1,10 +1,10 @@
-# Welmish-Woundikins 0.5%
+# Welmish-Woundikins 1%
 Made using Ruby and Curses.
 
 ### Installation:
 You will need to have one of the newer versions of Ruby installed and maybe the curses gem.
 Put all files into one directory. Then run in terminal: ruby main.rb
-It should work on Linux, however if it doesn't, make sure you have ncurses installed. It wasn't tested on the other systems.
+It should work on Linux, however if it doesn't, make sure you have ncurses installed. It wasn't tested on other systems.
 
 ### Controls:
 Nethack keys to move and attack, for up-left move/attack you can use either y or z.
