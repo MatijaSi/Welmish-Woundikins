@@ -15,7 +15,7 @@ Colours.
 ### Installation:
 You will need to have one of the newer versions of Ruby installed and maybe the curses gem.
 Put all files into one directory. Then run in terminal: ruby main.rb
-It should work on Linux (and other *nixes), however if it doesn't, make sure you have ncurses installed. If you have Windosws, good luck (maybe try cygwin?). It was only tested on linux.
+It should work on Linux (and other *nixes), however if it doesn't, make sure you have ncurses installed. If you have Windows, good luck (maybe try cygwin?). It was only tested on linux.
 
 ### Controls:
 Nethack keys to move and attack, for up-left move/attack you can use either y or z.
