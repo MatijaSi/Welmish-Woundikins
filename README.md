@@ -10,11 +10,14 @@ This is very early alpha, so there are some things you have to do to use it succ
 
 ### New:
 Sectorized map generator with caverns, dungeons and mazes.
+
 Colours.
 
 ### Installation:
 You will need to have one of the newer versions of Ruby installed and maybe the curses gem.
+
 Put all files into one directory. Then run in terminal: ruby main.rb
+
 It should work on Linux (and other *nixes), however if it doesn't, make sure you have ncurses installed. If you have Windows, good luck (maybe try cygwin?). It was only tested on linux.
 
 ### Controls:
