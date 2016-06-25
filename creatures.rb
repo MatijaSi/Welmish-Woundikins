@@ -34,7 +34,7 @@ module Creatures
 			super
 			@char = '@'
 			@name = "Jerrold"
-			@fov = 8
+			@fov = 9
 			@hp = 40
 			@dmg = 5
 		end

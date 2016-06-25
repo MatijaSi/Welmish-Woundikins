@@ -62,28 +62,48 @@ module Mapping
 		end
 		
 		def populate
+			puts "Generating map, please wait."
 			#cut the map in half
 			cut_x = @size[0] / 2 
+			cut_y = @size[1] / 2
 			
 			#create two maps, they should only generate ground tiles
-			map1 = MazeMap.new(0, 0, cut_x, @size[1])
+			map1 = DrunkardWalkMap.new(0, 0, cut_x, cut_y)
 			map1.populate
+			puts "Caverns generated"
 			
-			map2 = DrunkardWalkMap.new(cut_x, 0, @size[0], @size[1])
+			map2 = DungeonMap.new(cut_x, 0, @size[0], cut_y)
 			map2.populate
+			puts "Dungeons generated"
+			
+			map3 = MazeMap.new(0, cut_y, cut_x, @size[1])
+			map3.populate
+			puts "Mazes generated"
+			
+			map4 = DrunkardWalkMap.new(cut_x, cut_y, @size[0], @size[1])
+			map4.populate
+			puts "More caverns generated"
 			
 			#connect maps with corridors
 			tile1 = map1.tiles.sample
 			tile2 = map2.tiles.sample
+			tile3 = map3.tiles.sample
+			tile4 = map4.tiles.sample
+	
+			puts "Connecting parts of map together"
+	
+			corridors = Mapping.connect_with_corridors(tile1, tile2) + Mapping.connect_with_corridors(tile2, tile3) + Mapping.connect_with_corridors(tile3, tile4) + Mapping.connect_with_corridors(tile4, tile1)
 			
-			corridors = Mapping.connect_with_corridors(tile1, tile2)
+			corridor_tiles = []
+			corridors.each {|cor| corridor_tiles += cor.tiles}
 			
 			#combine them into map
-			@tiles = map1.tiles + map2.tiles + corridors[0].tiles + corridors[1].tiles
+			@tiles = map1.tiles + map2.tiles + map3.tiles + map4.tiles + corridor_tiles
 			
 			ptile = @tiles.sample
 			pcoords = [ptile.x, ptile.y]
 			
+			puts "Generating walls"
 			#sorround ground tiles with walls
 			@tiles.each do |tile|
 				x = tile.x
@@ -220,7 +240,7 @@ module Mapping
 	class DrunkardWalkMap < Map #map generated with drunkard walk alghoritm
 		def populate
 			borders = [@begin[0], @begin[1], @size[0], @size[1]]
-			dirs = [-1, 0, 1]
+			dirs = [-1, 0, 0, 1]
 			
 			x = ((borders[2] - borders[0]) / 2) + borders[0] #center of the map
 			y = ((borders[3] - borders[1]) / 2) + borders[1] #center of the map
@@ -285,10 +305,10 @@ module Mapping
 			room = Room.new(x, y, x + rand(3..7), y + rand(3..7))
 			room.populate
 			@tiles += room.tiles
-			puts "start room made"
 			
 			#generate corridors
-			until x >= borders[2] || x <= borders[0] || y >= borders[3] || y <= borders[1] #generate corridors till border of map is reached
+			i = 0
+			until i == 10
 				start_tile = @tiles.sample
 				if rand(1..6) > 3
 					corridor = VerticalCorridor.new(start_tile.x, start_tile.y, start_tile.x, start_tile.y + rand(5..7))
@@ -299,8 +319,7 @@ module Mapping
 				corridor.populate
 				@tiles += corridor.tiles
 				
-				x = start_tile.x
-				y = start_tile.y
+				i += 1
 			end
 		end
 	end
