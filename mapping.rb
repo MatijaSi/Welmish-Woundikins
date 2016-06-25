@@ -1,4 +1,4 @@
-require_relative "output.rb"
+#require_relative "output.rb"
 
 module Mapping
 	class Tile
@@ -66,10 +66,10 @@ module Mapping
 			cut_x = @size[0] / 2 
 			
 			#create two maps, they should only generate ground tiles
-			map1 = DungeonMap.new(0, 0, cut_x, @size[1])
+			map1 = MazeMap.new(0, 0, cut_x, @size[1])
 			map1.populate
 			
-			map2 = DungeonMap.new(cut_x, 0, @size[0], @size[1])
+			map2 = DrunkardWalkMap.new(cut_x, 0, @size[0], @size[1])
 			map2.populate
 			
 			#connect maps with corridors
@@ -218,6 +218,19 @@ module Mapping
 	end
 	
 	class DrunkardWalkMap < Map #map generated with drunkard walk alghoritm
+		def populate
+			borders = [@begin[0], @begin[1], @size[0], @size[1]]
+			dirs = [-1, 0, 1]
+			
+			x = ((borders[2] - borders[0]) / 2) + borders[0] #center of the map
+			y = ((borders[3] - borders[1]) / 2) + borders[1] #center of the map
+			
+			until x >= borders[2] || x <= borders[0] || y >= borders[3] || y <= borders[1] #generate ground till border of map is reached
+				@tiles.push(Ground.new(x, y))
+				x += dirs.sample
+				y += dirs.sample
+			end
+		end
 	end
 	
 	class DungeonMap < Map #map of corridors and rooms
@@ -228,19 +241,15 @@ module Mapping
 			
 			rooms = []
 			corridors = []
-			rooms.push(Room.new(x, y, x + rand(5..8), y + rand(3..4)))
+			rooms.push(Room.new(x, y, x + 5, y + 5))
 			
-			until x > borders[2] || x < borders[0] || y > borders[3] || y < borders[1]
-				if rand(3..6) > 3
-					x += rand(12..15)
-				elsif rand(3..6) > 2
-					y += rand(12..15)
-				else
-					x += rand(12..15)
-					y += rand(12..15)
-				end
+			i = 0
+			until i > 10
+				x = rand(borders[0]..(borders[2] - 30))
+				y = rand(borders[1]..(borders[3] - 30))
 				
 				rooms.push(Room.new(x, y, x + rand(5..8), y + rand(3..4)))
+				i += 1
 			end
 			
 			rooms.each {|room| room.populate}
@@ -262,6 +271,37 @@ module Mapping
 		end
 	end
 	
-	class AutomataMap < Map #map generated using celular automata
+	class AutomataMap < Map #map generated using cellular automata	
+	end
+	
+	class MazeMap < Map
+		def populate
+			borders = [@begin[0], @begin[1], @size[0], @size[1]]
+			
+			#first generate a room in center of the map
+			x = ((borders[2] - borders[0]) / 2) + borders[0] #center of the map
+			y = ((borders[3] - borders[1]) / 2) + borders[1] #center of the map
+			
+			room = Room.new(x, y, x + rand(3..7), y + rand(3..7))
+			room.populate
+			@tiles += room.tiles
+			puts "start room made"
+			
+			#generate corridors
+			until x >= borders[2] || x <= borders[0] || y >= borders[3] || y <= borders[1] #generate corridors till border of map is reached
+				start_tile = @tiles.sample
+				if rand(1..6) > 3
+					corridor = VerticalCorridor.new(start_tile.x, start_tile.y, start_tile.x, start_tile.y + rand(5..7))
+				else
+					corridor = HorizontalCorridor.new(start_tile.x, start_tile.y, start_tile.x + rand(5..7), start_tile.y)
+				end
+				
+				corridor.populate
+				@tiles += corridor.tiles
+				
+				x = start_tile.x
+				y = start_tile.y
+			end
+		end
 	end
 end
