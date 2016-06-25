@@ -6,8 +6,9 @@ module Output
 			@window = Curses::Window.new(height, width, y1, x1)
 		end
 		
-		def draw(x, y, string)
+		def draw(x, y, string, colour)
 			@window.setpos(y, x) #reversed order isn't error, library is retarded
+			@window.attrset(Curses.color_pair(colour))
 			@window.addstr(string)
 		end
 		
@@ -39,7 +40,7 @@ module Output
 			end
 			
 			to_display.each {|item|
-				draw(x, y, item)
+				draw(x, y, item, Output::Colours::WHITE)
 				y += 1}		
 			self.refresh
 		end
@@ -58,9 +59,27 @@ module Output
 		Curses.cbreak
 		Curses.nonl
 		Curses.curs_set(0)
+		Output::Colours.init_color_pairs
 	end
 	
 	def self.close_console
 		Curses.close_screen
+	end
+	
+	module Colours
+		#all of them are on black
+		WHITE = 1
+		BLUE = 2
+		RED = 3
+		YELLOW = 4
+		BLACK = 5
+		
+		def self.init_color_pairs
+			Curses.init_pair(1, Curses::COLOR_WHITE, Curses::COLOR_BLACK)
+			Curses.init_pair(2, Curses::COLOR_BLUE, Curses::COLOR_BLACK)
+			Curses.init_pair(3, Curses::COLOR_RED, Curses::COLOR_BLACK)
+			Curses.init_pair(4, Curses::COLOR_YELLOW, Curses::COLOR_BLACK)
+			Curses.init_pair(5, Curses::COLOR_BLACK, Curses::COLOR_BLACK)
+		end
 	end
 end

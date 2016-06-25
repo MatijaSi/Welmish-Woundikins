@@ -11,6 +11,8 @@ module Creatures
 			@hp = 20
 			@dmg = 2
 			@name = "Cthulhu"
+			@colour = Output::Colours::RED
+			@colour_not_fov = Output::Colours::BLACK
 		end
 		
 		def act
@@ -34,9 +36,10 @@ module Creatures
 			super
 			@char = '@'
 			@name = "Jerrold"
-			@fov = 9
+			@fov = 6
 			@hp = 40
 			@dmg = 5
+			@colour = Output::Colours::YELLOW
 		end
 		
 		def check_if_dead
@@ -95,11 +98,12 @@ module Creatures
 		end
 		
 		def state(view)
-			view.draw(0, 0, "#{@name}")
-			view.draw(0, 1, "x: #{@x}")
-			view.draw(0, 2, "y: #{@y}")
-			view.draw(0, 4, "health: #{@hp}")
-			view.draw(0, 5, "damage: #{@dmg}")
+			colour = Output::Colours::WHITE
+			view.draw(0, 0, "#{@name}", colour)
+			view.draw(0, 1, "x: #{@x}", colour)
+			view.draw(0, 2, "y: #{@y}", colour)
+			view.draw(0, 4, "health: #{@hp}", colour)
+			view.draw(0, 5, "damage: #{@dmg}", colour)
 		end
 	end
 	

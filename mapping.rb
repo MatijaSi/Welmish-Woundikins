@@ -7,6 +7,9 @@ module Mapping
 			@y = y
 			@char = 'X'
 			@blocked = nil
+			@colour = Output::Colours::WHITE
+			@colour_not_fov = Output::Colours::BLUE
+			@seen = false
 		end
 		
 		def draw(view)
@@ -15,8 +18,13 @@ module Mapping
 			y = @y - $player.y
 			y += MAIN_SIZE[1] / 2
 			
-			unless x > MAIN_SIZE[0] || x < 0 || y > MAIN_SIZE[1] || y < 0 || (not in_fov?($player))
-				view.draw(x, y, @char)
+			unless x > MAIN_SIZE[0] || x < 0 || y > MAIN_SIZE[1] || y < 0
+				if in_fov?($player)
+					view.draw(x, y, @char, @colour)
+					@seen = true
+				elsif @seen
+					view.draw(x, y, @char, @colour_not_fov)
+				end
 			end
 		end
 		
