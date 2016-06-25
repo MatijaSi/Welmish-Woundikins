@@ -37,6 +37,17 @@ until i >= number
 	i += 1
 end
 
+tile = false
+until tile
+	ntile = $map.tiles.sample
+	tile = ntile unless ntile.blocked
+end
+
+x = tile.x
+y = tile.y
+
+$boss = Creatures::Nazgul.new(x, y)
+
 #initial draw (so screen isn't empty before input)
 $map.draw($main_view)
 $player.draw($main_view)
@@ -76,8 +87,23 @@ while 1
 			$monsters.delete(monster)
 		end}
 	
+	if $boss.hp <= 0
+		$status_view.add_to_buffer("Congrats! You won by killing the dark one.")
+		$status_view.add_to_buffer("Quit by pressing 'q'")
+		$status_view.draw_buffer
+		
+		while 1
+			if Input.get_key($main_view.window) == 'q'
+				Output.close_console
+				exit
+			end
+		end
+	end
+	
 	$monsters.each {|monster| monster.draw($main_view)}
+	$boss.draw($main_view)
 	$monsters.each {|monster| monster.act}
+	$boss.act
 	
 	break if key == 'q'
 end

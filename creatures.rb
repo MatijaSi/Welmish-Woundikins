@@ -87,9 +87,11 @@ module Creatures
 				diry = 1
 			end
 			
-			monster = Mapping.exists($monsters, @x + dirx, @y + diry)
+			monster = Mapping.exists($monsters, @x + dirx, @y + diry) 
 			if monster
 				Combat.attack(self, monster)
+			elsif $boss.x == @x + dirx && $boss.y == @y + diry
+				Combat.attack(self, $boss)
 			else
 				move(dirx, diry) unless Mapping.exists($map.tiles, @x + dirx, @y + diry).blocked
 			end
@@ -126,10 +128,20 @@ module Creatures
 				ydir = (($player.y - @y) / ($player.y - @y).abs) unless $player.y == @y
 				ydir = 0 if $player.y == @y
 				
-				move(xdir, ydir) unless Mapping.exists($map.tiles, @x + xdir, @y + ydir).blocked || Mapping.exists($monsters, @x + xdir, @y + ydir)
+				move(xdir, ydir) unless Mapping.exists($map.tiles, @x + xdir, @y + ydir).blocked || Mapping.exists($monsters, @x + xdir, @y + ydir) || (@x + xdir == $player.x && @y + ydir == $player.y)
 			else
 				super
 			end
+		end
+	end
+	
+	class Nazgul < Goblin
+		def initialize(x, y)
+			super
+			@char = 'N'
+			@dmg = 7
+			@hp = 20
+			@name = "Nazgul"
 		end
 	end
 end
