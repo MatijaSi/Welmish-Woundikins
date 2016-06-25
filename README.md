@@ -13,6 +13,8 @@ Sectorized map generator with caverns, dungeons and mazes.
 
 Colours.
 
+Victory by killing a nazgul.
+
 ### Installation:
 You will need to have one of the newer versions of Ruby installed and maybe the curses gem.
 
