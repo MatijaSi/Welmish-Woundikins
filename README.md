@@ -7,6 +7,11 @@ This is very early alpha, so there are some things you have to do to use it succ
 1. Make sure the terminal in which you run the game is big enough (otherwise menus won't show)
 2. Mapgen takes a lot of time, so be patient.
 
+
+### New:
+Sectorized map generator with caverns, dungeons and mazes.
+Colours.
+
 ### Installation:
 You will need to have one of the newer versions of Ruby installed and maybe the curses gem.
 Put all files into one directory. Then run in terminal: ruby main.rb
@@ -14,9 +19,6 @@ It should work on Linux, however if it doesn't, make sure you have ncurses insta
 
 ### Controls:
 Nethack keys to move and attack, for up-left move/attack you can use either y or z.
-
-### New:
-Sectorized map generator with caverns, dungeons and mazes.
 
 ### Goals:
 A story heavy and atmospheric roguelike. To add to replayability the story will be procedurally generated. Atmosphere will be mostly present through short descriptions of creatures, items, map features...
