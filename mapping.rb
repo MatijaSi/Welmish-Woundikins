@@ -1,4 +1,4 @@
-#require_relative "output.rb"
+require_relative "output.rb"
 
 module Mapping
 	class Tile
