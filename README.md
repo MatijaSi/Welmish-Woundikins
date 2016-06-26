@@ -9,11 +9,7 @@ This is very early alpha, so there are some things you have to do to use it succ
 
 
 ### New:
-Sectorized map generator with caverns, dungeons and mazes.
-
-Colours.
-
-Victory by killing a nazgul.
+Victory by killing a nazgul, character classes (rogue and warrior), health regen.
 
 ### Installation:
 You will need to have one of the newer versions of Ruby installed and maybe the curses gem.
