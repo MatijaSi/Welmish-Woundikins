@@ -3,6 +3,17 @@ require_relative "input.rb"
 require_relative "mapping.rb"
 require_relative "creatures.rb"
 
+#get player name
+print "What's your name? > "
+name = gets.chomp
+
+pclass = 0
+until pclass == 'a' || pclass == 'b'
+	puts "Classes: a - rogue, b - warrior"
+	print "> "
+	pclass = gets.chomp
+end
+
 #initialize console
 Output.setup_console
 
@@ -21,11 +32,11 @@ $map = Mapping::Map.new(0, 0, 100, 100)
 coords = $map.populate
 
 #generate player
-$player = Creatures::Player.new(coords[0], coords[1])
+$player = Creatures::Player.new(coords[0], coords[1], name, pclass)
 
 #spawn monsters
 $monsters = []
-number = rand(3..7)
+number = rand(7..21)
 i = 0
 until i >= number
 	tile = false
@@ -43,10 +54,7 @@ until tile
 	tile = ntile unless ntile.blocked
 end
 
-x = tile.x
-y = tile.y
-
-$boss = Creatures::Nazgul.new(x, y)
+$monsters.push(Creatures::Nazgul.new(tile.x, tile.y))
 
 #initial draw (so screen isn't empty before input)
 $map.draw($main_view)
@@ -55,6 +63,7 @@ $player.draw($main_view)
 #status
 $status_view.add_to_buffer("Welcome to Welmish Woundikins!")
 $status_view.add_to_buffer("If you can't see the player menu, exit the game and resize screen.")
+$status_view.add_to_buffer("A nazgul is terrorizing your homeland.")
 $status_view.draw_buffer
 
 #main loop
@@ -74,37 +83,22 @@ while 1
 	$player.check_if_dead
 	$player.act(key) #give player control
 	
+	$monsters.each {|monster|
+		if monster.hp <= 0
+			monster.death
+		end}
+	
 	$main_view.clear
 	$map.draw($main_view)
 	$player.draw($main_view)
 	$main_view.refresh
-
 	
 	$monsters.each {|monster|
-		if monster.hp <= 0
-			$status_view.add_to_buffer("#{monster.name} died.")
-			$status_view.draw_buffer
-			$monsters.delete(monster)
-		end}
+		monster.draw($main_view)
+		monster.act
+		monster.regen}
 	
-	if $boss.hp <= 0
-		$status_view.add_to_buffer("Congrats! You won by killing the dark one.")
-		$status_view.add_to_buffer("Quit by pressing 'q'")
-		$status_view.draw_buffer
-		
-		while 1
-			if Input.get_key($main_view.window) == 'q'
-				Output.close_console
-				exit
-			end
-		end
-	end
-	
-	$monsters.each {|monster| monster.draw($main_view)}
-	$boss.draw($main_view)
-	$monsters.each {|monster| monster.act}
-	$boss.act
-	
+	$player.regen
 	break if key == 'q'
 end
 

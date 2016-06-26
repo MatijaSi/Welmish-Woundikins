@@ -8,11 +8,25 @@ module Creatures
 			@char = 'C'
 			@blocked = nil
 			@fov = 5
-			@hp = 20
+			@max_hp = 20
+			@hp = @max_hp
 			@dmg = 2
 			@name = "Cthulhu"
 			@colour = Output::Colours::RED
 			@colour_not_fov = Output::Colours::BLACK
+			@regen = 0.1
+		end
+		
+		def regen #restore some of lost lives
+			if @hp < @max_hp
+				@hp += @regen
+			end
+		end
+		
+		def death
+			$status_view.add_to_buffer("#{@name} died.")
+			$status_view.draw_buffer
+			$monsters.delete(self)
 		end
 		
 		def act
@@ -27,20 +41,36 @@ module Creatures
 			@y += to_y
 		end
 		
-		attr_reader :fov, :dmg, :name
+		attr_reader :fov, :dmg, :name, :max_hp
 		attr_accessor :hp
 	end
 	
 	class Player < GenericCreature
-		def initialize(x, y)
-			super
+		def initialize(x, y, name, pclass)
+			super(x, y)
 			@char = '@'
-			@name = "Jerrold"
-			@fov = 6
-			@hp = 40
-			@dmg = 5
+			@name = name
+			
+			case pclass
+			when 'b'
+				@class = "Warrior"
+			when 'a'
+				@class = "Rogue"
+			end
+			
+			@fov = 4 if @class == "Warrior"
+			@fov = 6 if @class == "Rogue"
+			
+			@max_hp = 40
+			@hp = @max_hp
+			@dmg = 5 if @class == "Rogue"
+			@dmg = 8 if @class == "Warrior"
+			
 			@colour = Output::Colours::YELLOW
+			@regen = 0.5
 		end
+		
+		attr_reader :class
 		
 		def check_if_dead
 			if @hp <= 0
@@ -90,8 +120,6 @@ module Creatures
 			monster = Mapping.exists($monsters, @x + dirx, @y + diry) 
 			if monster
 				Combat.attack(self, monster)
-			elsif $boss.x == @x + dirx && $boss.y == @y + diry
-				Combat.attack(self, $boss)
 			else
 				move(dirx, diry) unless Mapping.exists($map.tiles, @x + dirx, @y + diry).blocked
 			end
@@ -101,7 +129,7 @@ module Creatures
 		
 		def state(view)
 			colour = Output::Colours::WHITE
-			view.draw(0, 0, "#{@name}", colour)
+			view.draw(0, 0, "#{@class} #{@name}", colour)
 			view.draw(0, 1, "x: #{@x}", colour)
 			view.draw(0, 2, "y: #{@y}", colour)
 			view.draw(0, 4, "health: #{@hp}", colour)
@@ -114,7 +142,8 @@ module Creatures
 			super
 			@char = 'G'
 			@dmg = 3
-			@hp = 10
+			@max_hp = 10
+			@hp = @max_hp
 			@name = "Goblin"
 		end
 		
@@ -140,8 +169,22 @@ module Creatures
 			super
 			@char = 'N'
 			@dmg = 7
-			@hp = 20
+			@max_hp = 20
+			@hp = @max_hp
 			@name = "Nazgul"
+		end
+		
+		def death
+			$status_view.add_to_buffer("Congrats! You won by killing the dark one.")
+			$status_view.add_to_buffer("Quit by pressing 'q'")
+			$status_view.draw_buffer
+		
+			while 1
+				if Input.get_key($main_view.window) == 'q'
+					Output.close_console
+					exit
+				end
+			end
 		end
 	end
 end

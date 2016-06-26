@@ -5,12 +5,10 @@ module Input
 		return window.getch
 	end
 
-	def self.get_string(window)
-		window.keypad(true)
-		return window.getstr
+	def self.get_string
+		return Curses.getstr
 	end
 	
-	module SpecialKeys
-		
+	module SpecialKeys	
 	end
 end
