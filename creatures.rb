@@ -1,5 +1,6 @@
 require_relative "mapping.rb"
 require_relative "combat.rb"
+require_relative "input.rb"
 
 module Creatures
 	class GenericCreature < Mapping::Tile
@@ -8,13 +9,14 @@ module Creatures
 			@char = 'C'
 			@blocked = nil
 			@fov = 5
-			@max_hp = 20
+			@max_hp = 50
 			@hp = @max_hp
-			@dmg = 2
+			@dmg = 12
 			@name = "Cthulhu"
 			@colour = Output::Colours::RED
 			@colour_not_fov = Output::Colours::BLACK
 			@regen = 0.1
+			@type = :monster
 		end
 		
 		def regen #restore some of lost lives
@@ -50,6 +52,7 @@ module Creatures
 			super(x, y)
 			@char = '@'
 			@name = name
+			@type = :player
 			
 			case pclass
 			when 'b'
@@ -61,13 +64,13 @@ module Creatures
 			@fov = 4 if @class == "Warrior"
 			@fov = 6 if @class == "Rogue"
 			
-			@max_hp = 40
+			@max_hp = 100
 			@hp = @max_hp
-			@dmg = 5 if @class == "Rogue"
-			@dmg = 8 if @class == "Warrior"
+			@dmg = 10 if @class == "Rogue"
+			@dmg = 15 if @class == "Warrior"
 			
 			@colour = Output::Colours::YELLOW
-			@regen = 0.5
+			@regen = 2
 		end
 		
 		attr_reader :class
@@ -115,6 +118,15 @@ module Creatures
 			when 'n' #down-right
 				dirx = 1
 				diry = 1
+			when '.' #wait
+				dirx = 0
+				diry = 0
+			when 'q' #exit
+				Output.close_console
+				exit
+			else
+				key = Input.get_key($main_view.window)
+				$player.act(key)
 			end
 			
 			monster = Mapping.exists($monsters, @x + dirx, @y + diry) 
@@ -141,10 +153,11 @@ module Creatures
 		def initialize(x, y)
 			super
 			@char = 'G'
-			@dmg = 3
-			@max_hp = 10
+			@dmg = 12
+			@max_hp = 40
 			@hp = @max_hp
 			@name = "Goblin"
+			@colour = Output::Colours::GREEN
 		end
 		
 		def act
@@ -164,14 +177,40 @@ module Creatures
 		end
 	end
 	
+	class Scoundrel < Goblin
+		def initialize(x, y)
+			super
+			@char = 'S'
+			@dmg = 10
+			@name = "Scoundrel"
+			@colour = Output::Colours::CYAN
+		end
+		
+		def act
+			if @hp < (@max_hp / 2) && $player.in_fov?(self) #run
+				xdir = -(($player.x - @x) / ($player.x - @x).abs) unless $player.x == @x
+				xdir = 0 if $player.x == @x
+				
+				ydir = -(($player.y - @y) / ($player.y - @y).abs) unless $player.y == @y
+				ydir = 0 if $player.y == @y
+				
+				move(xdir, ydir) unless Mapping.exists($map.tiles, @x + xdir, @y + ydir).blocked || Mapping.exists($monsters, @x + xdir, @y + ydir) || (@x + xdir == $player.x && @y + ydir == $player.y)
+			else
+				super
+			end
+		end	
+	end
+	
 	class Nazgul < Goblin
 		def initialize(x, y)
 			super
 			@char = 'N'
-			@dmg = 7
-			@max_hp = 20
+			@dmg = 17
+			@max_hp = 80
 			@hp = @max_hp
 			@name = "Nazgul"
+			@regen = 5
+			@colour = Output::Colours::RED
 		end
 		
 		def death

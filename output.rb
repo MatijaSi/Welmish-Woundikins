@@ -73,6 +73,8 @@ module Output
 		RED = 3
 		YELLOW = 4
 		BLACK = 5
+		CYAN = 6
+		GREEN = 7
 		
 		def self.init_color_pairs
 			Curses.init_pair(1, Curses::COLOR_WHITE, Curses::COLOR_BLACK)
@@ -80,6 +82,8 @@ module Output
 			Curses.init_pair(3, Curses::COLOR_RED, Curses::COLOR_BLACK)
 			Curses.init_pair(4, Curses::COLOR_YELLOW, Curses::COLOR_BLACK)
 			Curses.init_pair(5, Curses::COLOR_BLACK, Curses::COLOR_BLACK)
+			Curses.init_pair(6, Curses::COLOR_CYAN, Curses::COLOR_BLACK)
+			Curses.init_pair(7, Curses::COLOR_GREEN, Curses::COLOR_BLACK)
 		end
 	end
 end

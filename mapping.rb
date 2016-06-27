@@ -10,6 +10,7 @@ module Mapping
 			@colour = Output::Colours::WHITE
 			@colour_not_fov = Output::Colours::BLUE
 			@seen = false
+			@type = :tile
 		end
 		
 		def draw(view)
@@ -18,10 +19,34 @@ module Mapping
 			y = @y - $player.y
 			y += MAIN_SIZE[1] / 2
 			
+			if $player.hp < ($player.max_hp / 4) #see red if near death
+				colour = Output::Colours::RED
+			else
+				colour = @colour
+			end
+			
+			#make rogue see monsters fovs
+			in_monster = false
+			if $player.class == "Rogue"
+				$monsters.each {|monster|
+					if in_fov?(monster) && monster.in_fov?($player)
+						colour = monster.colour
+						in_monster = true
+						break
+					end}
+			end
+			
+			#players and monsters always have same colour
+			if @type == :player || @type == :monster
+				colour = @colour
+			end
+			
 			unless x > MAIN_SIZE[0] || x < 0 || y > MAIN_SIZE[1] || y < 0
 				if in_fov?($player)
-					view.draw(x, y, @char, @colour)
+					view.draw(x, y, @char, colour)
 					@seen = true
+				elsif $player.class == "Rogue" && in_monster && @seen
+					view.draw(x, y, @char, colour)
 				elsif @seen
 					view.draw(x, y, @char, @colour_not_fov)
 				end
@@ -43,7 +68,7 @@ module Mapping
 			end
 		end
 		
-		attr_reader :x, :y, :blocked
+		attr_reader :x, :y, :blocked, :colour, :colour_not_fov
 	end
 	
 	class Ground < Tile
