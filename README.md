@@ -1,4 +1,4 @@
-# Welmish-Woundikins 1,3%
+# Welmish-Woundikins 1,5%
 Made using Ruby and Curses.
 
 ### Please note:
@@ -25,15 +25,17 @@ Nethack keys to move and attack, for up-left move/attack you can use either y or
 A story heavy and atmospheric roguelike. To add to replayability the story will be procedurally generated. Atmosphere will be mostly present through short descriptions of creatures, items, map features...
 
 ### Version goals:
-1%   - Basic movement and combat, simple map generator, player can die, simple FoV.
+1%    - Basic movement and combat, simple map generator, player can die, simple FoV.
 
-2%   - Map made from sectors, each with its own map generator (cavernous, rooms, dungeons, ...), floors (up and down stairs), map features (animals' burrows, dwellings, simple temples (without functionality yet), rivers, lakes, ...)
+2%    - Map made from sectors, each with its own map generator (cavernous, rooms, dungeons, ...), floors (up and down stairs).
 
 3%    - Items
 
 4%    - Better combat system, simple magic
 
 5%    - "Social" mode (talking with friendly creatures)
+
+6%    - Map features (dwellings, temples, burrows, ...)
 
 ...
 
