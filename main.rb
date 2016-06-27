@@ -44,10 +44,12 @@ until i >= number
 		ntile = $map.tiles.sample
 		tile = ntile unless ntile.blocked
 	end
-	if rand(1..6) > 2
+	if rand(1..6) > 3
 		$monsters.push(Creatures::Goblin.new(tile.x, tile.y))
-	else
+	elsif rand(1..6) > 2
 		$monsters.push(Creatures::Scoundrel.new(tile.x, tile.y))
+	else
+		$monsters.push(Creatures::Bomber.new(tile.x, tile.y))
 	end
 	i += 1
 end

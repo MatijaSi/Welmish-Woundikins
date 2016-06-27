@@ -19,12 +19,6 @@ module Mapping
 			y = @y - $player.y
 			y += MAIN_SIZE[1] / 2
 			
-			if $player.hp < ($player.max_hp / 4) #see red if near death
-				colour = Output::Colours::RED
-			else
-				colour = @colour
-			end
-			
 			#make rogue see monsters fovs
 			in_monster = false
 			if $player.class == "Rogue"
@@ -34,6 +28,13 @@ module Mapping
 						in_monster = true
 						break
 					end}
+			end
+			
+			#see red if near death
+			if $player.hp < ($player.max_hp / 4)
+				colour = Output::Colours::RED
+			else
+				colour = @colour
 			end
 			
 			#players and monsters always have same colour
@@ -85,8 +86,8 @@ module Mapping
 			@char = '#'
 			@blocked = true
 		end
-	end
-
+	end		
+	
 	class Map #map composed of more maps
 		def initialize(min_x, min_y, max_x, max_y)
 			@begin = [min_x, min_y]

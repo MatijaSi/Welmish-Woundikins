@@ -22,6 +22,7 @@ module Creatures
 		def regen #restore some of lost lives
 			if @hp < @max_hp
 				@hp += @regen
+				@hp = @max_hp if @hp > @max_hp
 			end
 		end
 		
@@ -121,10 +122,26 @@ module Creatures
 			when '.' #wait
 				dirx = 0
 				diry = 0
+				
+			#misc
+			when '?'
+				$status_view.add_to_buffer("Nethack keys for movement and attacking,")
+				$status_view.add_to_buffer("'?' for help, 'q' to quit, '.' to wait.")
+				$status_view.add_to_buffer("Good luck.")
+				$status_view.draw_buffer
+				$status_view.refresh
+				
+				key = Input.get_key($main_view.window)
+				$player.act(key)
 			when 'q' #exit
 				Output.close_console
 				exit
 			else
+				$status_view.add_to_buffer("I don't know that key,")
+				$status_view.add_to_buffer("Click '?' for help")
+				$status_view.draw_buffer
+				$status_view.refresh
+				
 				key = Input.get_key($main_view.window)
 				$player.act(key)
 			end
@@ -224,6 +241,39 @@ module Creatures
 					exit
 				end
 			end
+		end
+	end
+	
+	class Bomber < Goblin
+		def initialize(x, y)
+			super
+			@char = 'B'
+			@dmg = 1
+			@max_hp = 5
+			@hp = @max_hp
+			@name = "Bomber"
+			@regen = 0
+			@colour = Output::Colours::RED
+		end
+		
+		def act
+			if ($player.x - @x).abs < 2 && ($player.y - @y).abs < 2
+				self.death
+			else
+				super
+			end
+		end
+		
+		def death
+			array = $monsters + [$player]
+			array.each {|being|
+				if (being.x - @x).abs < 3 && (being.y - @y).abs < 3
+					being.hp -= 30
+				end}
+			
+			$status_view.add_to_buffer("#{@name} exploded.")
+			$status_view.draw_buffer
+			$monsters.delete(self)
 		end
 	end
 end
