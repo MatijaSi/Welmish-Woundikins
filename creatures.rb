@@ -36,7 +36,7 @@ module Creatures
 			dirs = [-1, 0, +1]
 			xdir = dirs.sample
 			ydir = dirs.sample
-			move(xdir, ydir) unless Mapping.exists($map.tiles, @x + xdir, @y + ydir).blocked
+			move(xdir, ydir) unless not Mapping.exists($map.tiles, @x + xdir, @y + ydir) && Mapping.exists($map.tiles, @x + xdir, @y + ydir).blocked
 		end
 		
 		def move(to_x, to_y)
@@ -61,15 +61,18 @@ module Creatures
 				@class = "Warrior"
 			when 'a'
 				@class = "Rogue"
+			when 'c'
+				@class = "Barbarian"
 			end
 			
-			@fov = 4 if @class == "Warrior"
+			@fov = 4 if @class == "Warrior" || @class == "Barbarian"
 			@fov = 6 if @class == "Rogue"
 			
 			@max_hp = 100
+			@max_hp = 80 if @class == "Barbarian"
 			@hp = @max_hp
 			@dmg = 10 if @class == "Rogue"
-			@dmg = 15 if @class == "Warrior"
+			@dmg = 15 if @class == "Warrior" || @class == "Barbarian"
 			
 			@colour = Output::Colours::YELLOW
 			@regen = 2
@@ -146,6 +149,11 @@ module Creatures
 				
 				key = Input.get_key($main_view.window)
 				$player.act(key)
+			end
+			
+			#recalc damage
+			if @hp <= @max_hp / 4 && @class == "Barbarian"
+				@dmg = 20
 			end
 			
 			monster = Mapping.exists($monsters, @x + dirx, @y + diry) 

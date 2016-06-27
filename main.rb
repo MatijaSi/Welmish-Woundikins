@@ -8,8 +8,8 @@ print "What's your name? > "
 name = gets.chomp
 
 pclass = 0
-until pclass == 'a' || pclass == 'b'
-	puts "Classes: a - rogue, b - warrior"
+until pclass == 'a' || pclass == 'b' || pclass == 'c'
+	puts "Classes: a - rogue, b - warrior, c - barbarian"
 	print "> "
 	pclass = gets.chomp
 end
