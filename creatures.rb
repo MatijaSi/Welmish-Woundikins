@@ -52,7 +52,7 @@ module Creatures
 		def initialize(x, y, name, pclass)
 			super(x, y)
 			@char = '@'
-			@name = name
+			@name = name.capitalize
 			@type = :player
 			@kills = 0
 			
@@ -160,12 +160,13 @@ module Creatures
 		
 		def state(view)
 			colour = Output::Colours::WHITE
-			view.draw(0, 0, "#{@class} #{@name}", colour)
+			view.draw(0, 0, "#{@name} the #{@class}", colour)
 			view.draw(0, 1, "x: #{@x}", colour)
 			view.draw(0, 2, "y: #{@y}", colour)
-			view.draw(0, 4, "health: #{@hp}", colour)
-			view.draw(0, 5, "damage: #{@dmg}", colour)
-			view.draw(0, 7, "kills: #{@kills}", colour)
+			view.draw(0, 4, "health: #{@hp}/#{@max_hp}", colour)
+			view.draw(0, 5, "regen per turn: #{@regen}", colour)
+			view.draw(0, 6, "damage: #{@dmg}", colour)
+			view.draw(0, 8, "kills: #{@kills}", colour)
 		end
 	end
 	
@@ -220,7 +221,7 @@ module Creatures
 				j = 0
 				until i >= 2
 					until j >= 2
-						unless Mapping.exists($map.tiles, @x + dirs[i], @y + dirs[j]).blocked && i == j && i == 0
+						unless Mapping.exists($map.tiles, @x + dirs[i], @y + dirs[j]).blocked && i == j && i == 0 && Mapping.exists($monsters, @x + dirs[i], @y + dirs[j])
 							if rand(1..6) == 6
 								$monsters.push(GoblinWarlord.new(@x + dirs[i], @y + dirs[j]))
 							else
@@ -267,12 +268,13 @@ module Creatures
 		def initialize(x, y)
 			super
 			@char = 'N'
-			@dmg = 17
-			@max_hp = 80
+			@dmg = 15
+			@max_hp = 75
 			@hp = @max_hp
 			@name = "Nazgul"
 			@regen = 5
 			@colour = Output::Colours::RED
+			@fov = 8
 		end
 		
 		def death
