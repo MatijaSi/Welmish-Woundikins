@@ -15,7 +15,7 @@ module Creatures
 			@name = "Cthulhu"
 			@colour = Output::Colours::RED
 			@colour_not_fov = Output::Colours::BLACK
-			@regen = 0.1
+			@regen = 1
 			@type = :monster
 		end
 		
@@ -54,6 +54,7 @@ module Creatures
 			@char = '@'
 			@name = name
 			@type = :player
+			@kills = 0
 			
 			case pclass
 			when 'b'
@@ -75,6 +76,7 @@ module Creatures
 		end
 		
 		attr_reader :class
+		attr_accessor :kills
 		
 		def check_if_dead
 			if @hp <= 0
@@ -163,6 +165,7 @@ module Creatures
 			view.draw(0, 2, "y: #{@y}", colour)
 			view.draw(0, 4, "health: #{@hp}", colour)
 			view.draw(0, 5, "damage: #{@dmg}", colour)
+			view.draw(0, 7, "kills: #{@kills}", colour)
 		end
 	end
 	
@@ -188,6 +191,48 @@ module Creatures
 				ydir = 0 if $player.y == @y
 				
 				move(xdir, ydir) unless Mapping.exists($map.tiles, @x + xdir, @y + ydir).blocked || Mapping.exists($monsters, @x + xdir, @y + ydir) || (@x + xdir == $player.x && @y + ydir == $player.y)
+			else
+				super
+			end
+		end
+	end
+	
+	class GoblinWarlord < Goblin
+		def initialize(x, y)
+			super
+			@char = 'G'
+			@name = "Goblin Warlord"
+			@colour = Output::Colours::RED
+			@dmg = 15
+			@max_hp = 50
+			@hp = @max_hp
+			@regen = 3
+		end
+		
+		def act
+			if $player.in_fov?(self) && rand(1..6) == 6
+				$status_view.add_to_buffer("#{@name} summoned his followers!")
+				$status_view.draw_buffer
+				$status_view.refresh
+				
+				dirs = [-1, 0, 1]
+				i = 0
+				j = 0
+				until i >= 2
+					until j >= 2
+						unless Mapping.exists($map.tiles, @x + dirs[i], @y + dirs[j]).blocked && i == j && i == 0
+							if rand(1..6) == 6
+								$monsters.push(GoblinWarlord.new(@x + dirs[i], @y + dirs[j]))
+							else
+								$monsters.push(Goblin.new(@x + dirs[i], @y + dirs[j]))
+							end
+						end
+						
+						j += 1
+					end
+						j = 0
+						i += 1
+				end
 			else
 				super
 			end

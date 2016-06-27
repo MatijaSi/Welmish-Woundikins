@@ -18,6 +18,13 @@ module Mapping
 			x += MAIN_SIZE[0] / 2
 			y = @y - $player.y
 			y += MAIN_SIZE[1] / 2
+						
+			#see red if near death
+			if $player.hp < ($player.max_hp / 4)
+				colour = Output::Colours::RED
+			else
+				colour = @colour
+			end
 			
 			#make rogue see monsters fovs
 			in_monster = false
@@ -28,13 +35,6 @@ module Mapping
 						in_monster = true
 						break
 					end}
-			end
-			
-			#see red if near death
-			if $player.hp < ($player.max_hp / 4)
-				colour = Output::Colours::RED
-			else
-				colour = @colour
 			end
 			
 			#players and monsters always have same colour

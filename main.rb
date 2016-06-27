@@ -44,9 +44,11 @@ until i >= number
 		ntile = $map.tiles.sample
 		tile = ntile unless ntile.blocked
 	end
-	if rand(1..6) > 3
+	if rand(1..10) > 8
+		$monsters.push(Creatures::GoblinWarlord.new(tile.x, tile.y))
+	elsif rand(1..10) > 4
 		$monsters.push(Creatures::Goblin.new(tile.x, tile.y))
-	elsif rand(1..6) > 2
+	elsif rand(1..10) > 3
 		$monsters.push(Creatures::Scoundrel.new(tile.x, tile.y))
 	else
 		$monsters.push(Creatures::Bomber.new(tile.x, tile.y))
@@ -92,6 +94,7 @@ while 1
 	$monsters.each {|monster|
 		if monster.hp <= 0
 			monster.death
+			$player.kills += 1
 		end}
 	
 	$main_view.clear
