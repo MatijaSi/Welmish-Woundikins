@@ -14,7 +14,7 @@ Rogues can now see fovs of monsters (so stealth-ing past monsters is now easier)
 ### Current version:
 Three player classes: Warriors (decent damage, more health than barbarians, smaller fov), Rogues (smaller damage, same health as warriors, bigger fov, can see fovs of monsters (useful for stealthing past them) and Barbarians (smaller health, bigger damage when close to death).
 
-Monsters: Goblins, Goblin Warlords (summoners), Scoundrels (run away when wounded), Bombers (explode when close to player).
+Monsters: Goblins, Goblin Warlords (summoners), Scoundrels (run away when wounded), Bombers (explode when close to player), Nazgul (you win when/if you kill him).
 
 Map generators: Cavernous (drunkard walk alghoritm), Mazes (lots of corridors), Rooms (tend to generate big, merged rooms)
 
