@@ -9,7 +9,7 @@ This is very early alpha, so there are some things you have to do to use it succ
 
 
 ### New:
-Rogues can now see fovs of monsters (so stealth-ing past monsters is now easier), increased difficulty.
+Rogues can now see fovs of monsters (so stealth-ing past monsters is now easier), increased difficulty. Added bombers.
 
 ### Installation:
 You will need to have one of the newer versions of Ruby installed and maybe the curses gem.
