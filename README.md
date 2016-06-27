@@ -1,4 +1,4 @@
-# Welmish Woundikins 1,5%
+# Welmish Woundikins 2,5%
 Made using Ruby and Curses.
 
 ### Please note:
@@ -9,7 +9,7 @@ This is very early alpha, so there are some things you have to do to use it succ
 
 
 ### New:
-Rogues can now see fovs of monsters (so stealth-ing past monsters is now easier), increased difficulty. Added bombers and scoundrels, each with their own additions to AI.
+Rogues can now see fovs of monsters (so stealth-ing past monsters is now easier), increased difficulty. Added bombers and scoundrels, each with their own additions to AI. Added Goblin Warlords, which are basically summoners.
 
 ### Installation:
 You will need to have one of the newer versions of Ruby installed and maybe the curses gem.
@@ -25,17 +25,20 @@ Nethack keys to move and attack, for up-left move/attack you can use either y or
 A story heavy and atmospheric roguelike. To add to replayability the story will be procedurally generated. Atmosphere will be mostly present through short descriptions of creatures, items, map features...
 
 ### Version goals:
+
+Probably won't be followed, they are there just to give you an idea what's in the works. Goals are going to change frequently, to suit what is currently being developed.
+
 1%    - Basic movement and combat, simple map generator, player can die, simple FoV.
 
-2%    - Map made from sectors, each with its own map generator (cavernous, rooms, dungeons, ...), floors (up and down stairs).
+2%    - Map made from sectors, each with its own map generator (cavernous, rooms, dungeons, ...).
 
-3%    - Items
+3%    - Items and new monsters.
 
 4%    - Better combat system, simple magic
 
 5%    - "Social" mode (talking with friendly creatures)
 
-6%    - Map features (dwellings, temples, burrows, ...)
+6%    - Map features (dwellings, temples, burrows, ...), floors (stairs).
 
 ...
 
