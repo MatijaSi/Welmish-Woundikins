@@ -28,10 +28,13 @@ Put all files into one directory. Then run in terminal: ruby main.rb
 It should work on Linux (and other *nixes), however if it doesn't, make sure you have ncurses installed. If you have Windows, good luck (maybe try cygwin?). It was only tested on linux.
 
 ### Controls:
-Nethack keys to move and attack, for up-left move/attack you can use either y or z. 
+Nethack keys to move and attack, for up-left move/attack you can use either y or z.
+
 '?' for help, 'Q' to quit, '.' to wait one turn.
-'i' - inventory, 'e' - equipment
-',' - pick up, 'd' - drop, 'w' - wear/wield, 'q' - quaff, 'r' - read, 't' - take off
+
+'i' - inventory, 'e' - equipment.
+
+',' - pick up, 'd' - drop, 'w' - wear/wield, 'q' - quaff, 'r' - read, 't' - take off.
 
 ### Goals:
 A story heavy and atmospheric roguelike. To add to replayability the story will be procedurally generated. Atmosphere will be mostly present through short descriptions of creatures, items, map features...
