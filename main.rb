@@ -43,7 +43,7 @@ until i >= number
 	tile = false
 	until tile
 		ntile = $map.tiles.sample
-		tile = ntile unless ntile.blocked
+		tile = ntile unless ntile.blocked || Mapping.exists($items, ntile.x, ntile.y) || ($player.x == ntile.x && $player.y == ntile.y)
 	end
 	
 	item = rand(1..10)
@@ -51,10 +51,14 @@ until i >= number
 	case item
 	when 1 , 2
 		$items.push(Items::Wearable.new(tile.x, tile.y, '|', "Sword", 3, 0))
-	when 3 , 4
+	when 3
 		$items.push(Items::Wearable.new(tile.x, tile.y, '|', "Mace", 5, 0))
-	when 5 , 6
+	when 4
+		$items.push(Items::Wearable.new(tile.x, tile.y, '[', "Heavy armour", 0, 20))
+	when 5
 		$items.push(Items::Wearable.new(tile.x, tile.y, '[', "Light armour", 0, 10))
+	when 6
+		$items.push(Items::Wearable.new(tile.x, tile.y, '[', "Helmet", 0, 15))
 	when 7
 		$items.push(Items::HealingPotion.new(tile.x, tile.y, '!', "Potion"))
 	when 8
@@ -75,7 +79,7 @@ until i >= number
 	tile = false
 	until tile
 		ntile = $map.tiles.sample
-		tile = ntile unless ntile.blocked
+		tile = ntile unless ntile.blocked || Mapping.exists($monsters, ntile.x, ntile.y) || ($player.x == ntile.x && $player.y == ntile.y)
 	end
 	if rand(1..10) > 8
 		$monsters.push(Creatures::GoblinWarlord.new(tile.x, tile.y))
@@ -92,7 +96,7 @@ end
 tile = false
 until tile
 	ntile = $map.tiles.sample
-	tile = ntile unless ntile.blocked
+	tile = ntile unless ntile.blocked || Mapping.exists($monsters, ntile.x, ntile.y) || ($player.x == ntile.x && $player.y == ntile.y)
 end
 
 $monsters.push(Creatures::Nazgul.new(tile.x, tile.y))

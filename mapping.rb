@@ -48,7 +48,7 @@ module Mapping
 					@seen = true
 				elsif $player.class == "Rogue" && in_monster && @seen
 					view.draw(x, y, @char, colour)
-				elsif @seen
+				elsif @seen && self.type != :monster
 					view.draw(x, y, @char, @colour_not_fov)
 				end
 			end
@@ -69,7 +69,7 @@ module Mapping
 			end
 		end
 		
-		attr_reader :blocked, :colour, :colour_not_fov
+		attr_reader :blocked, :colour, :colour_not_fov, :type
 		attr_accessor :x, :y
 	end
 	

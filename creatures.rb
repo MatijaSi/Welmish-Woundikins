@@ -323,13 +323,16 @@ module Creatures
 				dirs = [-1, 0, 1]
 				i = 0
 				j = 0
-				until i >= 2
-					until j >= 2
-						unless Mapping.exists($map.tiles, @x + dirs[i], @y + dirs[j]).blocked && i == j && i == 0 && Mapping.exists($monsters, @x + dirs[i], @y + dirs[j]) && $player.x == @x + dirs[i] && $player.y == @y + dirs[j]
-							if rand(1..6) == 6
+				num = 0
+				until i > 2
+					until j > 2
+						unless (Mapping.exists($map.tiles, @x + dirs[i], @y + dirs[j]).blocked) || (i == j && i == 0) || (Mapping.exists($monsters, @x + dirs[i], @y + dirs[j])) || ($player.x == @x + dirs[i] && $player.y == @y + dirs[j])
+							if rand(1..20) == 20
 								$monsters.push(GoblinWarlord.new(@x + dirs[i], @y + dirs[j]))
-							else
+							elsif rand(1..6) > 3
 								$monsters.push(Goblin.new(@x + dirs[i], @y + dirs[j]))
+								num += 1
+								break if num > 3
 							end
 						end
 						
@@ -372,8 +375,8 @@ module Creatures
 		def initialize(x, y)
 			super
 			@char = 'N'
-			@dmg = 15
-			@max_hp = 65
+			@dmg = 20
+			@max_hp = 100
 			@hp = @max_hp
 			@name = "Nazgul"
 			@regen = 1
