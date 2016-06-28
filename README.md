@@ -9,7 +9,7 @@ This is very early alpha, so there are some things you have to do to use it succ
 
 
 ### New:
-Rogues can now see fovs of monsters (so stealth-ing past monsters is now easier), increased difficulty. Added bombers and scoundrels, each with their own additions to AI. Added Goblin Warlords, which are basically summoners. Barbarian class, whose damage is bigger when close to death.
+Items! Weapons, armour, potions and scrolls. Added picking up items, dropping them, wearing/wielding, taking them off, reading and quaffing (the usual). Potions and scrolls for now don't do anything, while wearables increase your damage and/or health.
 
 ### Current version:
 Three player classes: Warriors (decent damage, more health than barbarians, smaller fov), Rogues (smaller damage, same health as warriors, bigger fov, can see fovs of monsters (useful for stealthing past them) and Barbarians (smaller health, bigger damage when close to death).
@@ -17,6 +17,8 @@ Three player classes: Warriors (decent damage, more health than barbarians, smal
 Monsters: Goblins, Goblin Warlords (summoners), Scoundrels (run away when wounded), Bombers (explode when close to player), Nazgul (you win when/if you kill him).
 
 Map generators: Cavernous (drunkard walk alghoritm), Mazes (lots of corridors), Rooms (tend to generate big, merged rooms)
+
+Items: Weapons, Armours, Potions, Scrolls.
 
 ### Installation:
 You will need to have one of the newer versions of Ruby installed and maybe the curses gem.
