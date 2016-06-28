@@ -1,4 +1,4 @@
-# Welmish Woundikins 2,9%
+# Welmish Woundikins 3%
 Made using Ruby and Curses.
 
 ### Please note:
@@ -9,7 +9,7 @@ This is very early alpha, so there are some things you have to do to use it succ
 
 
 ### New:
-Items! Weapons, armour, potions and scrolls. Added picking up items, dropping them, wearing/wielding, taking them off, reading and quaffing (the usual). Potions and scrolls for now don't do anything, while wearables increase your damage and/or health.
+Items! Weapons, armour, potions and scrolls. Added picking up items, dropping them, wearing/wielding, taking them off, reading and quaffing (the usual). Wearables increase your damage and/or health, while potions may either heal or poison you and scroll teleport you.
 
 ### Current version:
 Three player classes: Warriors (decent damage, more health than barbarians, smaller fov), Rogues (smaller damage, same health as warriors, bigger fov, can see fovs of monsters (useful for stealthing past them) and Barbarians (smaller health, bigger damage when close to death).
@@ -18,7 +18,7 @@ Monsters: Goblins, Goblin Warlords (summoners), Scoundrels (run away when wounde
 
 Map generators: Cavernous (drunkard walk alghoritm), Mazes (lots of corridors), Rooms (tend to generate big, merged rooms)
 
-Items: Weapons, Armours, Potions, Scrolls.
+Items: Weapons, Armours, Potions of healing, Potions of poison, Teleport scrolls.
 
 ### Installation:
 You will need to have one of the newer versions of Ruby installed and maybe the curses gem.
