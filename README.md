@@ -9,10 +9,10 @@ This is very early alpha, so there are some things you have to do to use it succ
 
 
 ### New:
-Items! Weapons, armour, potions and scrolls. Added picking up items, dropping them, wearing/wielding, taking them off, reading and quaffing (the usual). Wearables increase your damage and/or health, while potions may either heal or poison you and scroll teleport you.
+Items! Weapons, armour, potions and scrolls. Added picking up items, dropping them, wearing/wielding, taking them off, reading and quaffing (the usual). Wearables increase your damage and/or health, while potions may either heal or poison you and scrolls teleport you.
 
 ### Current version:
-Three player classes: Warriors (decent damage, more health than barbarians, smaller fov), Rogues (smaller damage, same health as warriors, bigger fov, can see fovs of monsters (useful for stealthing past them) and Barbarians (smaller health, bigger damage when close to death).
+Three player classes: Warriors (decent damage, more health than barbarians, smaller fov), Rogues (smaller damage, same health as warriors, bigger fov, can see fovs of monsters (useful for stealthing past them)) and Barbarians (smaller health, bigger damage when close to death).
 
 Monsters: Goblins, Goblin Warlords (summoners), Scoundrels (run away when wounded), Bombers (explode when close to player), Nazgul (you win when/if you kill him).
 
@@ -28,7 +28,10 @@ Put all files into one directory. Then run in terminal: ruby main.rb
 It should work on Linux (and other *nixes), however if it doesn't, make sure you have ncurses installed. If you have Windows, good luck (maybe try cygwin?). It was only tested on linux.
 
 ### Controls:
-Nethack keys to move and attack, for up-left move/attack you can use either y or z. '?' for help, 'q' to quit, '.' to wait one turn.
+Nethack keys to move and attack, for up-left move/attack you can use either y or z. 
+'?' for help, 'Q' to quit, '.' to wait one turn.
+'i' - inventory, 'e' - equipment
+',' - pick up, 'd' - drop, 'w' - wear/wield, 'q' - quaff, 'r' - read, 't' - take off
 
 ### Goals:
 A story heavy and atmospheric roguelike. To add to replayability the story will be procedurally generated. Atmosphere will be mostly present through short descriptions of creatures, items, map features...
