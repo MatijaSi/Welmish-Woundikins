@@ -17,6 +17,9 @@ module Creatures
 			@colour_not_fov = Output::Colours::BLACK
 			@regen = 1
 			@type = :monster
+			
+			@inventory = []
+			@equipment = []
 		end
 		
 		def regen #restore some of lost lives
@@ -44,8 +47,8 @@ module Creatures
 			@y += to_y
 		end
 		
-		attr_reader :fov, :dmg, :name, :max_hp
-		attr_accessor :hp
+		attr_reader :fov, :name
+		attr_accessor :hp, :dmg, :max_hp, :equipment, :inventory
 	end
 	
 	class Player < GenericCreature
@@ -127,18 +130,93 @@ module Creatures
 			when '.' #wait
 				dirx = 0
 				diry = 0
+			
+			#item manipulationg
+			when ',' #pick item up
+				item = Mapping.exists($items, @x, @y)
+				item.pick_up(self) if item
+			when 'd' #drop item
+				$status_view.add_to_buffer("Which item?")
+				$status_view.draw_buffer
+				$status_view.refresh
+				
+				index = Input.get_key($main_view.window)
+				
+				item = false
+				item = inventory[index.to_i] if index.to_i < inventory.count
+				item.drop(self) if item
+			when 'i' #display inventory
+				$status_view.add_to_buffer("Inventory:")
+				i = 0
+				@inventory.each {|item| 
+					$status_view.add_to_buffer("#{i}: #{item.name}")
+					i += 1}
+
+				$status_view.draw_buffer
+				$status_view.refresh
+			when 'e' #display equipment
+				$status_view.add_to_buffer("Equipment:")
+				i = 0
+				@equipment.each {|item|
+					$status_view.add_to_buffer("#{i}: #{item.name}")
+					i += 1}
+				$status_view.draw_buffer
+				$status_view.refresh
+			when 'w' #wear or wield
+				$status_view.add_to_buffer("Which item?")
+				$status_view.draw_buffer
+				$status_view.refresh
+				
+				index = Input.get_key($main_view.window)
+				
+				item = false
+				item = inventory[index.to_i] if index.to_i < inventory.count
+				item.wear(self) if item && item.is_a?(Items::Wearable)
+			when 't' #take off
+				$status_view.add_to_buffer("Which item?")
+				$status_view.draw_buffer
+				$status_view.refresh
+				
+				index = Input.get_key($main_view.window)
+				
+				item = false
+				item = equipment[index.to_i] if index.to_i < equipment.count
+				item.take_off(self) if item 
+			when 'r' #read
+				$status_view.add_to_buffer("Which item?")
+				$status_view.draw_buffer
+				$status_view.refresh
+				
+				index = Input.get_key($main_view.window)
+				
+				item = false
+				item = inventory[index.to_i] if index.to_i < inventory.count
+				item.read(self) if item && item.is_a?(Items::Scroll)
+			when 'q' #quaff
+				$status_view.add_to_buffer("Which item?")
+				$status_view.draw_buffer
+				$status_view.refresh
+				
+				index = Input.get_key($main_view.window)
+				
+				item = false
+				item = inventory[index.to_i] if index.to_i < inventory.count
+				item.quaff(self) if item && item.is_a?(Items::Potion)
 				
 			#misc
 			when '?'
 				$status_view.add_to_buffer("Nethack keys for movement and attacking,")
-				$status_view.add_to_buffer("'?' for help, 'q' to quit, '.' to wait.")
+				$status_view.add_to_buffer("',' to pick up item, 'd' to drop it")
+				$status_view.add_to_buffer("'w' - wear/wield, 't' - take off,  'q' - quaff, 'r' - read")
+				$status_view.add_to_buffer("'?' for help, 'Q' to quit, '.' to wait")
+				$status_view.add_to_buffer("'i' - display inventory, 'e' - display equipment.")
 				$status_view.add_to_buffer("Good luck.")
 				$status_view.draw_buffer
 				$status_view.refresh
 				
 				key = Input.get_key($main_view.window)
 				$player.act(key)
-			when 'q' #exit
+			when 'Q' #exit
 				Output.close_console
 				exit
 			else
@@ -175,6 +253,24 @@ module Creatures
 			view.draw(0, 5, "regen per turn: #{@regen}", colour)
 			view.draw(0, 6, "damage: #{@dmg}", colour)
 			view.draw(0, 8, "kills: #{@kills}", colour)
+			view.draw(0, 10, "Inventory:", colour)
+			
+			i = 11
+			j = 0
+			@inventory.each {|item|
+				view.draw(0, i, "#{j}: #{item.name}", colour)
+				i += 1
+				j += 1}
+			
+			i += 1
+			view.draw(0, i, "Equipment:", colour)
+			
+			i += 1
+			j = 0
+			@equipment.each {|item|
+				view.draw(0, i, "#{j}: #{item.name}", colour)
+				i += 1
+				j += 1}
 		end
 	end
 	
@@ -199,7 +295,7 @@ module Creatures
 				ydir = (($player.y - @y) / ($player.y - @y).abs) unless $player.y == @y
 				ydir = 0 if $player.y == @y
 				
-				move(xdir, ydir) unless Mapping.exists($map.tiles, @x + xdir, @y + ydir).blocked || Mapping.exists($monsters, @x + xdir, @y + ydir) || (@x + xdir == $player.x && @y + ydir == $player.y)
+				move(xdir, ydir) unless (not Mapping.exists($map.tiles, @x + xdir, @y + ydir)) || Mapping.exists($monsters, @x + xdir, @y + ydir) || (@x + xdir == $player.x && @y + ydir == $player.y) || Mapping.exists($map.tiles, @x + xdir, @y + ydir).blocked
 			else
 				super
 			end
@@ -277,10 +373,10 @@ module Creatures
 			super
 			@char = 'N'
 			@dmg = 15
-			@max_hp = 75
+			@max_hp = 65
 			@hp = @max_hp
 			@name = "Nazgul"
-			@regen = 5
+			@regen = 1
 			@colour = Output::Colours::RED
 			@fov = 8
 		end

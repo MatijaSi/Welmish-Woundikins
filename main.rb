@@ -2,6 +2,7 @@ require_relative "output.rb"
 require_relative "input.rb"
 require_relative "mapping.rb"
 require_relative "creatures.rb"
+require_relative "items.rb"
 
 #get player name
 print "What's your name? > "
@@ -33,6 +34,36 @@ coords = $map.populate
 
 #generate player
 $player = Creatures::Player.new(coords[0], coords[1], name, pclass)
+
+#spawn items
+$items = []
+number = rand(5..15)
+i = 0
+until i >= number
+	tile = false
+	until tile
+		ntile = $map.tiles.sample
+		tile = ntile unless ntile.blocked
+	end
+	
+	item = rand(1..10)
+	
+	case item
+	when 1 , 2
+		$items.push(Items::Wearable.new(tile.x, tile.y, '|', "Sword", 3, 0))
+	when 3 , 4
+		$items.push(Items::Wearable.new(tile.x, tile.y, '|', "Mace", 5, 0))
+	when 5 , 6
+		$items.push(Items::Wearable.new(tile.x, tile.y, '[', "Light armour", 0, 10))
+	when 7 , 8
+		$items.push(Items::Potion.new(tile.x, tile.y, '!', "Potion"))
+	when 9 , 10
+		$items.push(Items::Scroll.new(tile.x, tile.y, '~', "Scroll"))
+	else
+		$items.push(Items::Wearable.new(tile.x, tile.y, 'æ', "Shield of Wonders", 7, 20))
+	end
+	i += 1
+end
 
 #spawn monsters
 $monsters = []
@@ -67,6 +98,8 @@ $monsters.push(Creatures::Nazgul.new(tile.x, tile.y))
 #initial draw (so screen isn't empty before input)
 $map.draw($main_view)
 $player.draw($main_view)
+$items.each {|item| item.draw($main_view)}
+$monsters.each {|monster| monster.draw($main_view)}
 
 #status
 $status_view.add_to_buffer("Welcome to Welmish Woundikins!")
@@ -99,6 +132,7 @@ while 1
 	
 	$main_view.clear
 	$map.draw($main_view)
+	$items.each {|item| item.draw($main_view)}
 	$player.draw($main_view)
 	$main_view.refresh
 	
@@ -108,7 +142,7 @@ while 1
 		monster.regen}
 	
 	$player.regen
-	break if key == 'q'
+	break if key == 'Q'
 end
 
 Output.close_console

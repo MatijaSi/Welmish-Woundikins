@@ -38,7 +38,7 @@ module Mapping
 			end
 			
 			#players and monsters always have same colour
-			if @type == :player || @type == :monster
+			if @type == :player || @type == :monster || @type == :item
 				colour = @colour
 			end
 			
