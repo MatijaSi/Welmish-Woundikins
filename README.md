@@ -1,4 +1,4 @@
-# Welmish Woundikins 2,5%
+# Welmish Woundikins 2,9%
 Made using Ruby and Curses.
 
 ### Please note:
