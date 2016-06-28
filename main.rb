@@ -55,10 +55,12 @@ until i >= number
 		$items.push(Items::Wearable.new(tile.x, tile.y, '|', "Mace", 5, 0))
 	when 5 , 6
 		$items.push(Items::Wearable.new(tile.x, tile.y, '[', "Light armour", 0, 10))
-	when 7 , 8
-		$items.push(Items::Potion.new(tile.x, tile.y, '!', "Potion"))
+	when 7
+		$items.push(Items::HealingPotion.new(tile.x, tile.y, '!', "Potion"))
+	when 8
+		$items.push(Items::PoisonPotion.new(tile.x, tile.y, '!', "Potion"))
 	when 9 , 10
-		$items.push(Items::Scroll.new(tile.x, tile.y, '~', "Scroll"))
+		$items.push(Items::TeleportScroll.new(tile.x, tile.y, '~', "Scroll"))
 	else
 		$items.push(Items::Wearable.new(tile.x, tile.y, 'æ', "Shield of Wonders", 7, 20))
 	end

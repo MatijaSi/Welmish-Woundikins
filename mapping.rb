@@ -69,7 +69,8 @@ module Mapping
 			end
 		end
 		
-		attr_reader :x, :y, :blocked, :colour, :colour_not_fov
+		attr_reader :blocked, :colour, :colour_not_fov
+		attr_accessor :x, :y
 	end
 	
 	class Ground < Tile

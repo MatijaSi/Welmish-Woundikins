@@ -71,7 +71,7 @@ module Items
 	class Scroll < Item
 		def read(player)
 			$status_view.add_to_buffer("You read #{@name}!")
-			$status_view.add_to_buffer("Nothing happens...")
+			$status_view.add_to_buffer("It burns up in front of your eyes")
 			$status_view.draw_buffer
 			$status_view.refresh
 			
@@ -87,6 +87,50 @@ module Items
 			$status_view.refresh
 			
 			player.inventory.delete(self)
+		end
+	end
+	
+	class HealingPotion < Potion
+		def quaff(player)
+			super
+			if player.hp + 10 > player.max_hp
+				player.hp = player.max_hp
+			else
+				player.hp += 10
+			end
+			
+			$status_view.add_to_buffer("It was a potion of healing")
+			$status_view.draw_buffer
+			$status_view.refresh
+		end
+	end
+	
+	class PoisonPotion < Potion
+		def quaff(player)
+			super
+			player.hp -= 10
+			
+			$status_view.add_to_buffer("It was a potion of poison")
+			$status_view.draw_buffer
+			$status_view.refresh
+		end
+	end
+	
+	class TeleportScroll < Scroll
+		def read(player)
+			super
+			tile = false
+			until tile
+				ntile = $map.tiles.sample
+				tile = ntile unless ntile.blocked
+			end
+			
+			player.x = tile.x
+			player.y = tile.y
+			
+			$status_view.add_to_buffer("You are drawn into strange flux.")
+			$status_view.draw_buffer
+			$status_view.refresh
 		end
 	end
 end
