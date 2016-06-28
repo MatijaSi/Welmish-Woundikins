@@ -325,7 +325,7 @@ module Creatures
 				j = 0
 				until i >= 2
 					until j >= 2
-						unless Mapping.exists($map.tiles, @x + dirs[i], @y + dirs[j]).blocked && i == j && i == 0 && Mapping.exists($monsters, @x + dirs[i], @y + dirs[j])
+						unless Mapping.exists($map.tiles, @x + dirs[i], @y + dirs[j]).blocked && i == j && i == 0 && Mapping.exists($monsters, @x + dirs[i], @y + dirs[j]) && $player.x == @x + dirs[i] && $player.y == @y + dirs[j]
 							if rand(1..6) == 6
 								$monsters.push(GoblinWarlord.new(@x + dirs[i], @y + dirs[j]))
 							else
