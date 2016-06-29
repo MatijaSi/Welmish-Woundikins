@@ -4,8 +4,8 @@ Made using Ruby and Curses.
 ### Please note:
 This is very early alpha, so there are some things you have to do to use it successfully:
 
-1. Make sure the terminal in which you run the game is at least 80x24 chars big (otherwise menus won't show)
-2. Mapgen takes some time, so be patient.
+1. Make sure the terminal in which you run the game is big enough (otherwise menus won't show)
+2. Mapgen takes a lot of time, so be patient.
 
 
 ### New:
@@ -51,8 +51,6 @@ Nethack keys to move and attack, for up-left move/attack you can use either y or
 ### Goals:
 A story heavy and atmospheric roguelike. To add to replayability the story will be procedurally generated. Atmosphere will be mostly present through short descriptions of creatures, items, map features...
 
-No leveling, player should depend on rituals and items for survival. Sense of progress will be satisfied by player improving his equipment, specializing it and learning new rituals (learnt through interactions with dungeon denizens)
-
 ### Version goals:
 
 Probably won't be followed, they are there just to give you an idea what's in the works. Goals are going to change frequently, to suit what is currently being developed.
@@ -71,7 +69,7 @@ Probably won't be followed, they are there just to give you an idea what's in th
 
 ...
 
-10%   - Crafting ("enchanting" items with essences, imbuing items with materials, imbuing them with spells, ...), ritual based magic system  (crafting will form a base for rituals).
+10%   - Crafting, ritual based magic system
 
 20%   - First version of story generator
 

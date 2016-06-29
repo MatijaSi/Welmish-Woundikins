@@ -9,9 +9,9 @@ print "What's your name? > "
 name = gets.chomp
 
 pclass = 0
-until pclass == 'a' || pclass == 'b' || pclass == 'c' || pclass == 'g' || pclass == 's'
-	puts "Classes: a - rogue, b - warrior, c - barbarian"
-	puts "Monsters (testing): g - goblin, s - scoundrel"
+until pclass == 'a' || pclass == 'b' || pclass == 'c' || pclass == 'd' || pclass == 'g' || pclass == 's'
+	puts "Classes: a - rogue, b - warrior, c - barbarian, d - hoplite"
+	puts "Monsters: g - goblin, s - scoundrel"
 	print "> "
 	pclass = gets.chomp
 end
@@ -40,6 +40,8 @@ elsif pclass == 'a'
 	$player = Creatures::Rogue.new(coords[0], coords[1], name)
 elsif pclass == 'c'
 	$player = Creatures::Barbarian.new(coords[0], coords[1], name)
+elsif pclass == 'd'
+	$player = Creatures::Hoplite.new(coords[0], coords[1], name)
 elsif pclass == 'g'
 	$player = Creatures::Goblin.new(coords[0], coords[1], name)
 	$player.player = true
