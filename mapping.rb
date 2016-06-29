@@ -61,12 +61,10 @@ module Mapping
 			ty = @y
 			fov = player.fov
 			cond_distance = (((tx - px).abs * (tx - px).abs + (ty - py).abs * (ty - py).abs) <= (fov * fov))
+			return_value = false
+			return_value = true if cond_distance
 
-			if cond_distance
-				return true
-			else
-				return false
-			end
+			return return_value
 		end
 		
 		attr_reader :blocked, :colour, :colour_not_fov, :type

@@ -9,8 +9,9 @@ print "What's your name? > "
 name = gets.chomp
 
 pclass = 0
-until pclass == 'a' || pclass == 'b' || pclass == 'c'
+until pclass == 'a' || pclass == 'b' || pclass == 'c' || pclass == 'g' || pclass == 's'
 	puts "Classes: a - rogue, b - warrior, c - barbarian"
+	puts "Monsters (testing): g - goblin, s - scoundrel"
 	print "> "
 	pclass = gets.chomp
 end
@@ -21,7 +22,7 @@ Output.setup_console
 #constants
 MAIN_SIZE = [80, 20]
 STATUS_SIZE = [MAIN_SIZE[0], 10]
-PLAYER_SIZE = [20, MAIN_SIZE[1] + STATUS_SIZE[1]]
+PLAYER_SIZE = [30, MAIN_SIZE[1] + STATUS_SIZE[1]]
 
 #initialize views
 $main_view = Output::View.new(0, 0, MAIN_SIZE[0], MAIN_SIZE[1])
@@ -33,7 +34,15 @@ $map = Mapping::Map.new(0, 0, 100, 100)
 coords = $map.populate
 
 #generate player
-$player = Creatures::Player.new(coords[0], coords[1], name, pclass)
+if pclass == 'a' || pclass == 'b' || pclass == 'c'
+	$player = Creatures::Player.new(coords[0], coords[1], name, pclass)
+elsif pclass == 'g'
+	$player = Creatures::Goblin.new(coords[0], coords[1])
+	$player.player = true
+elsif pclass == 's'
+	$player = Creatures::Scoundrel.new(coords[0], coords[1])
+	$player.player = true
+end
 
 #spawn items
 $items = []
@@ -115,6 +124,8 @@ $status_view.draw_buffer
 
 #main loop
 while 1
+	#Mapping.recalc_fov($player)
+	
 	$main_view.window.box('*', '*') #give the window border
 	
 	$player_view.clear
