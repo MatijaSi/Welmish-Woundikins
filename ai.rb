@@ -74,7 +74,19 @@ module PlayerAI #player controlled
 				
 			item = false
 			item = player.inventory[index.to_i] if index.to_i < player.inventory.count
-			item.wear(player) if item && item.is_a?(Items::Wearable)
+			
+			if item && item.is_a?(Items::Wearable)
+				slots_taken = 0
+				player.equipment.each {|nitem| slots_taken += 1 if nitem.slot == item.slot}
+				
+				if slots_taken < player.slots[item.slot]
+					item.wear(player)
+				else
+					$status_view.add_to_buffer("You don't have enough #{item.slot}s!")
+					$status_view.draw_buffer
+					$status_view.refresh
+				end
+			end
 		when 't' #take off
 			$status_view.add_to_buffer("Which item?")
 			$status_view.draw_buffer

@@ -63,23 +63,23 @@ until i >= number
 	
 	case item
 	when 1 , 2
-		$items.push(Items::Wearable.new(tile.x, tile.y, '|', "Sword", 3, 0))
+		$items.push(Items::Weapon.new(tile.x, tile.y, '|', "Sword", 3, 0))
 	when 3
-		$items.push(Items::Wearable.new(tile.x, tile.y, '|', "Mace", 5, 0))
+		$items.push(Items::Weapon.new(tile.x, tile.y, '|', "Mace", 5, 0))
 	when 4
-		$items.push(Items::Wearable.new(tile.x, tile.y, '[', "Heavy armour", 0, 20))
+		$items.push(Items::Armour.new(tile.x, tile.y, '[', "Heavy armour", 0, 20))
 	when 5
-		$items.push(Items::Wearable.new(tile.x, tile.y, '[', "Light armour", 0, 10))
+		$items.push(Items::Helmet.new(tile.x, tile.y, '[', "Helmet", 0, 10))
 	when 6
-		$items.push(Items::Wearable.new(tile.x, tile.y, '[', "Helmet", 0, 15))
+		$items.push(Items::Shield.new(tile.x, tile.y, '[', "Shield", 0, 15))
 	when 7
 		$items.push(Items::HealingPotion.new(tile.x, tile.y, '!', "Potion"))
-	when 8
+	when 8, 9
 		$items.push(Items::PoisonPotion.new(tile.x, tile.y, '!', "Potion"))
-	when 9 , 10
+	when 10
 		$items.push(Items::TeleportScroll.new(tile.x, tile.y, '~', "Scroll"))
 	else
-		$items.push(Items::Wearable.new(tile.x, tile.y, 'æ', "Shield of Wonders", 7, 20))
+		$items.push(Items::Shield.new(tile.x, tile.y, 'æ', "Shield of Wonders", 7, 20))
 	end
 	i += 1
 end

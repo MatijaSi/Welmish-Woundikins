@@ -24,6 +24,9 @@ module Creatures
 			
 			@inventory = []
 			@equipment = []
+			
+			#number of inventory slots
+			@slots = {"arm" => 2, "head" => 1, "torso" => 1}
 		end
 		
 		def regen #restore some of lost lives
@@ -96,7 +99,7 @@ module Creatures
 			@y += to_y
 		end
 		
-		attr_reader :fov, :name, :class
+		attr_reader :fov, :name, :class, :slots
 		attr_accessor :hp, :dmg, :max_hp, :equipment, :inventory, :player, :kills
 	end
 	

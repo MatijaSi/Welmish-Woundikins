@@ -2,7 +2,7 @@ require_relative "mapping.rb"
 
 module Items
 	class Item < Mapping::Tile
-		def initialize(x, y, char = '°', name = "Lamp of Green Djinni")
+		def initialize(x, y, char, name)
 			super(x, y)
 			@char = char
 			@color = Output::Colours::YELLOW
@@ -39,9 +39,10 @@ module Items
 			super(x, y, char, name)
 			@dmg_bonus = dmg
 			@hp_bonus = hp
+			@slot = "finger"
 		end
 		
-		attr_accessor :dmg_bonus, :hp_bonus
+		attr_accessor :dmg_bonus, :hp_bonus, :slot
 		
 		def wear(player)
 			player.inventory.delete(self)
@@ -65,6 +66,34 @@ module Items
 			
 			player.dmg -= @dmg_bonus
 			player.max_hp -= @dmg_bonus
+		end
+	end
+	
+	class Armour < Wearable
+		def initialize(x, y, char, name, dmg, hp)
+			super
+			@slot = "torso"
+		end
+	end
+	
+	class Weapon < Wearable
+		def initialize(x, y, char, name, dmg, hp)
+			super
+			@slot = "arm"
+		end
+	end
+	
+	class Shield < Wearable
+		def initialize(x, y, char, name, dmg, hp)
+			super
+			@slot = "arm"
+		end
+	end
+	
+	class Helmet < Wearable
+		def initialize(x, y, char, name, dmg, hp)
+			super
+			@slot = "head"
 		end
 	end
 	
