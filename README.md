@@ -71,7 +71,7 @@ Probably won't be followed, they are there just to give you an idea what's in th
 
 ...
 
-10%   - Crafting, ritual based magic system
+10%   - Crafting ("enchanting" items with essences, imbuing items with materials, imbuing them with spells, ...), ritual based magic system  (crafting will form a base for rituals).
 
 20%   - First version of story generator
 
