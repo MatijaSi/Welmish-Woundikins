@@ -20,9 +20,9 @@ end
 Output.setup_console
 
 #constants
-MAIN_SIZE = [80, 20]
-STATUS_SIZE = [MAIN_SIZE[0], 10]
-PLAYER_SIZE = [30, MAIN_SIZE[1] + STATUS_SIZE[1]]
+MAIN_SIZE = [60, 18]
+STATUS_SIZE = [MAIN_SIZE[0], 6]
+PLAYER_SIZE = [20, MAIN_SIZE[1] + STATUS_SIZE[1]]
 
 #initialize views
 $main_view = Output::View.new(0, 0, MAIN_SIZE[0], MAIN_SIZE[1])
@@ -96,13 +96,11 @@ $status_view.draw_buffer
 
 #main loop
 while 1
-	#Mapping.recalc_fov($player)
-	
-	$main_view.window.box('*', '*') #give the window border
-	
 	$player_view.clear
 	$player.state($player_view)
 	$player_view.refresh
+	
+	#$main_view.window.box('*', '*') #for window border, it flashes annoying sometimes though
 	
 	key = Input.get_key($main_view.window)
 	
@@ -123,12 +121,13 @@ while 1
 	$map.draw($main_view)
 	$items.each {|item| item.draw($main_view)}
 	$player.draw($main_view)
-	$main_view.refresh
 	
 	$monsters.each {|monster|
 		monster.draw($main_view)
 		monster.act
 		monster.regen}
+	
+	$main_view.refresh
 	
 	$player.regen
 	break if key == 'Q'

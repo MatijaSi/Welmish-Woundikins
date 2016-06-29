@@ -19,30 +19,30 @@ module Mapping
 			y = @y - $player.y
 			y += MAIN_SIZE[1] / 2
 						
-			#see red if near death
-			if $player.hp < ($player.max_hp / 4)
-				colour = Output::Colours::RED
-			else
-				colour = @colour
-			end
-			
-			#make rogue see monsters fovs
-			in_monster = false
-			if $player.is_a?(Creatures::Rogue)
-				$monsters.each {|monster|
-					if in_fov?(monster) && monster.in_fov?($player)
-						colour = monster.colour
-						in_monster = true
-						break
-					end}
-			end
-			
-			#players and monsters always have same colour
-			if @type == :player || @type == :monster || @type == :item
-				colour = @colour
-			end
-			
 			unless x > MAIN_SIZE[0] || x < 0 || y > MAIN_SIZE[1] || y < 0
+				#see red if near death
+				if $player.hp < ($player.max_hp / 4)
+					colour = Output::Colours::RED
+				else
+					colour = @colour
+				end
+			
+				#make rogue see monsters fovs
+				in_monster = false
+				if $player.is_a?(Creatures::Rogue)
+					$monsters.each {|monster|
+						if in_fov?(monster) && monster.in_fov?($player)
+							colour = monster.colour
+							in_monster = true
+							break
+						end}
+				end
+			
+				#players and monsters always have same colour
+				if @type == :player || @type == :monster || @type == :item
+					colour = @colour
+				end
+			
 				if in_fov?($player)
 					view.draw(x, y, @char, colour)
 					@seen = true
