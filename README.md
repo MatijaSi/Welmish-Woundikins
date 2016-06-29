@@ -9,12 +9,12 @@ This is very early alpha, so there are some things you have to do to use it succ
 
 
 ### New:
-Items! Weapons, armour, potions and scrolls. Added picking up items, dropping them, wearing/wielding, taking them off, reading and quaffing (the usual). Wearables increase your damage and/or health, while potions may either heal or poison you and scrolls teleport you.
-
 Playable monsters, only goblins and scoundrels for now, though.
 
+Hoplite class
+
 ### Current version:
-Three player classes: Warriors (decent damage, more health than barbarians, smaller fov), Rogues (smaller damage, same health as warriors, bigger fov, can see fovs of monsters (useful for stealthing past them)) and Barbarians (smaller health, bigger damage when close to death). Or you can play as a goblin or as a scoundrel.
+Four player classes: Warriors (decent damage, more health than barbarians, smaller fov), Rogues (smaller damage, same health as warriors, bigger fov, can see fovs of monsters (useful for stealthing past them)), Barbarians (smaller health, bigger damage when close to death) and Hoplites (they begin with spear and shield). Or you can play as a goblin or as a scoundrel.
 
 Monsters: Goblins, Goblin Warlords (summoners), Scoundrels (run away when wounded), Bombers (explode when close to player), Nazgul (you win when/if you kill him).
 
