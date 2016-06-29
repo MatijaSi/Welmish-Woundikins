@@ -162,4 +162,67 @@ module Items
 			$status_view.refresh
 		end
 	end
+	
+	def self.item_generator(x, y) #generate one item
+		n = rand(1..51)
+		
+		case n
+		when 1, 28, 29, 30, 31
+			item = Items::Weapon.new(x, y, '|', "Sword", 3, 0)
+		when 2, 32, 33
+			item = Items::Weapon.new(x, y, '|', "Hatchet", 4, 0)
+		when 3, 34
+			item = Items::Weapon.new(x, y, '|', "Mace", 5, 0)
+		when 4, 27
+			item = Items::Armour.new(x, y, '[', "Heavy armour", 0, 20)
+		when 5, 41
+			item = Items::Helmet.new(x, y, '[', "Helmet", 0, 7)
+		when 6, 42, 43, 44, 45
+			item = Items::Shield.new(x, y, ']', "Buckler", 0, 5)
+		when 7, 8, 49, 50
+			item = Items::HealingPotion.new(x, y, '!', "Potion")
+		when 9, 10, 51
+			item = Items::PoisonPotion.new(x, y, '!', "Potion")
+		when 11, 12
+			item = Items::TeleportScroll.new(x, y, '?', "Scroll")
+		when 13, 21, 22, 23, 24
+			item = Items::Armour.new(x, y, '[', "Light armour", 0, 10)
+		when 14, 25, 26
+			item = Items::Armour.new(x, y, '[', "Scale mail", 0, 15)
+		when 15, 46, 47
+			item = Items::Shield.new(x, y, ']', "Shield", 0, 8)
+		when 16, 48
+			item = Items::Shield.new(x, y, ']', "Tower shield", 0, 17)
+		when 17, 39, 40
+			item = Items::Helmet.new(x, y, '[', "Cap", 0, 5)
+		when 18, 35, 36, 37, 38
+			item = Items::Helmet.new(x, y, '[', "Mask", 0, 2)
+		when 19
+			item = Items::Weapon.new(x, y, '[', "Sting", 8, 0)
+		when 20
+			item = Items::Helmet.new(x, y, '[', "Ithilus Mask", 0, 20)
+		else
+			item = Items::Shield.new(x, y, 'æ', "Shield of Wonders", 7, 20)
+		end
+		
+		return item
+	end
+	
+	def self.items_generator(number, map) #generates number items
+		i = 0
+		items = []
+		until i >= number
+			tile = false
+			until tile
+				ntile = map.tiles.sample
+				tile = ntile unless ntile.blocked || Mapping.exists(items, ntile.x, ntile.y) || ($player.x == ntile.x && $player.y == ntile.y)
+			end
+			
+			items.push(Items.item_generator(tile.x, tile.y))
+			
+			i += 1
+		end
+		
+		return items
+	end
 end

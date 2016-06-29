@@ -1,7 +1,7 @@
 require_relative "mapping.rb"
 require_relative "combat.rb"
-require_relative "input.rb"
 require_relative "ai.rb"
+require_relative "items.rb"
 
 module Creatures
 	class GenericCreature < Mapping::Tile
@@ -29,15 +29,15 @@ module Creatures
 			@slots = {"arm" => 2, "head" => 1, "torso" => 1}
 		end
 		
-		def regen #restore some of lost lives
+		def regen #restore some of lost health
 			if @hp < @max_hp
 				@hp += @regen
 				@hp = @max_hp if @hp > @max_hp
 			end
 		end
 		
-		def check_if_dead
-			if @hp <= 0
+		def check_if_dead #only use with player controlled beings!
+			if @hp <= 0 && @player == true
 				$status_view.add_to_buffer("You died.")
 				$status_view.add_to_buffer("Press q to quit.")
 				$status_view.draw_buffer
@@ -55,6 +55,12 @@ module Creatures
 			$status_view.add_to_buffer("#{@name} died.")
 			$status_view.draw_buffer
 			$monsters.delete(self)
+			
+			if rand(1..6) > 5 #drop an item
+				$items.push(Items.item_generator(@x, @y))
+				$status_view.add_to_buffer("#{@name} dropped something!.")
+				$status_view.draw_buffer
+			end
 		end
 		
 		def state(view)

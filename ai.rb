@@ -1,5 +1,6 @@
 #File with mixins defining monster actions
 require_relative "mapping.rb"
+require_relative "input.rb"
 
 module PlayerAI #player controlled
 	def self.act(key, player)
