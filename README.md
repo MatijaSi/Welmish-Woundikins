@@ -51,6 +51,8 @@ Nethack keys to move and attack, for up-left move/attack you can use either y or
 ### Goals:
 A story heavy and atmospheric roguelike. To add to replayability the story will be procedurally generated. Atmosphere will be mostly present through short descriptions of creatures, items, map features...
 
+No leveling, player should depend on rituals and items for survival. Sense of progress will be satisfied by player improving his equipment, specializing it and learning new rituals (learnt through interactions with dungeon denizens)
+
 ### Version goals:
 
 Probably won't be followed, they are there just to give you an idea what's in the works. Goals are going to change frequently, to suit what is currently being developed.
