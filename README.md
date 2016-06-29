@@ -4,8 +4,8 @@ Made using Ruby and Curses.
 ### Please note:
 This is very early alpha, so there are some things you have to do to use it successfully:
 
-1. Make sure the terminal in which you run the game is big enough (otherwise menus won't show)
-2. Mapgen takes a lot of time, so be patient.
+1. Make sure the terminal in which you run the game is at least 80x24 chars big (otherwise menus won't show)
+2. Mapgen takes some time, so be patient.
 
 
 ### New:
