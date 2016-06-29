@@ -24,11 +24,17 @@ Items: Weapons, Armours, Potions of healing, Potions of poison, Teleport scrolls
 
 ### Installation:
 Linux:
+
 1) Install dependencies (you do not need git if you manually download the source code):
+
 sudo apt-get install ruby2.0 libncurses5 git
+
 2) Clone the repository (unnecessary if you manually download the source):
+
 git clone https://github.com/MatijaSi/Welmish-Woundikins.git
+
 3) Run the game from the Welmish-Woundikins directory:
+
 ruby main.rb
 
 If you have Windows, good luck (maybe try cygwin?). It was only tested on linux.
