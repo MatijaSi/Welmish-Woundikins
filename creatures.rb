@@ -61,6 +61,14 @@ module Creatures
 				$status_view.add_to_buffer("#{@name} dropped something!.")
 				$status_view.draw_buffer
 			end
+			
+			#redraw screen
+			$main_view.clear
+			$map.draw($main_view)
+			$items.each {|item| item.draw($main_view)}
+			$player.draw($main_view)
+			$monsters.each {|monster| monster.draw($main_view)}
+			$main_view.refresh
 		end
 		
 		def state(view)
@@ -323,6 +331,13 @@ module Creatures
 			$status_view.add_to_buffer("#{@name} exploded.")
 			$status_view.draw_buffer
 			$monsters.delete(self)
+			
+			$main_view.clear
+			$map.draw($main_view)
+			$items.each {|item| item.draw($main_view)}
+			$player.draw($main_view)
+			$monsters.each {|monster| monster.draw($main_view)}
+			$main_view.refresh
 		end
 	end
 end
