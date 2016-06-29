@@ -2,6 +2,9 @@
 require_relative "mapping.rb"
 require_relative "input.rb"
 
+$alphabet = []
+('a'..'z').each {|char| $alphabet.push(char)}
+
 module PlayerAI #player controlled
 	def self.act(key, player)
 		#default movement values
@@ -38,86 +41,115 @@ module PlayerAI #player controlled
 		#item manipulationg
 		when ',' #pick item up
 			item = Mapping.exists($items, player.x, player.y)
-			item.pick_up(player) if item
+			
+			if item
+				item.pick_up(player)
+			else
+				$status_view.add_to_buffer("You see no items here.")
+				$status_view.draw_buffer
+			end
 		when 'd' #drop item
 			$status_view.add_to_buffer("Which item?")
 			$status_view.draw_buffer
-			$status_view.refresh
 			
 			index = Input.get_key($main_view.window)
 				
 			item = false
 			item = player.inventory[index.to_i] if index.to_i < player.inventory.count
-			item.drop(player) if item
+			if item
+				item.drop(player) 
+			else
+				$status_view.add_to_buffer("You don't have that item.")
+				$status_view.draw_buffer
+			end
 		when 'i' #display inventory
 			$status_view.add_to_buffer("Inventory:")
 			i = 0
 			player.inventory.each {|item| 
-				$status_view.add_to_buffer("#{i}: #{item.name}")
+				$status_view.add_to_buffer("#{$alphabet[i]}: #{item.name}")
 				i += 1}
 
 			$status_view.draw_buffer
-			$status_view.refresh
 		when 'e' #display equipment
 			$status_view.add_to_buffer("Equipment:")
 			i = 0
 			player.equipment.each {|item|
-				$status_view.add_to_buffer("#{i}: #{item.name}")
+				$status_view.add_to_buffer("#{$alphabet[i]}: #{item.name}")
 				i += 1}
 			$status_view.draw_buffer
-			$status_view.refresh
 		when 'w' #wear or wield
 			$status_view.add_to_buffer("Which item?")
 			$status_view.draw_buffer
-			$status_view.refresh
 				
-			index = Input.get_key($main_view.window)
+			char = Input.get_key($main_view.window)
+			index = $alphabet.index(char)
 				
 			item = false
-			item = player.inventory[index.to_i] if index.to_i < player.inventory.count
+			item = player.inventory[index] if index < player.inventory.count
 			
 			if item && item.is_a?(Items::Wearable)
 				slots_taken = 0
 				player.equipment.each {|nitem| slots_taken += 1 if nitem.slot == item.slot}
 				
 				if slots_taken < player.slots[item.slot]
-					item.wear(player)
+					item.wear(player) 
 				else
 					$status_view.add_to_buffer("You don't have enough #{item.slot}s!")
 					$status_view.draw_buffer
-					$status_view.refresh
 				end
+			else
+				$status_view.add_to_buffer("You don't have that item.")
+				$status_view.draw_buffer
 			end
 		when 't' #take off
 			$status_view.add_to_buffer("Which item?")
 			$status_view.draw_buffer
-			$status_view.refresh
 				
-			index = Input.get_key($main_view.window)
+			char = Input.get_key($main_view.window)
+			index = $alphabet.index(char)
 				
 			item = false
-			item = player.equipment[index.to_i] if index.to_i < player.equipment.count
-			item.take_off(player) if item 
+			item = player.equipment[index] if index < player.equipment.count
+			
+			if item 
+				item.take_off(player)
+			else
+				$status_view.add_to_buffer("You don't have that item.")
+				$status_view.draw_buffer
+			end
+			
 		when 'r' #read
 			$status_view.add_to_buffer("Which item?")
 			$status_view.draw_buffer
-			$status_view.refresh
 				
-			index = Input.get_key($main_view.window)
+			char = Input.get_key($main_view.window)
+			index = $alphabet.index(char)
 				
 			item = false
-			item = player.inventory[index.to_i] if index.to_i < player.inventory.count
-			item.read(player) if item && item.is_a?(Items::Scroll)
+			item = player.inventory[index] if index < player.inventory.count
+			
+			if item && item.is_a?(Items::Scroll)
+				item.read(player) 
+			else
+				$status_view.add_to_buffer("You don't have that item.")
+				$status_view.draw_buffer
+			end
 		when 'q' #quaff
 			$status_view.add_to_buffer("Which item?")
 			$status_view.draw_buffer
-			$status_view.refresh
 				
-			index = Input.get_key($main_view.window)
+			char = Input.get_key($main_view.window)
+			index = $alphabet.index(char)
 				
 			item = false
-			item = player.inventory[index.to_i] if index.to_i < player.inventory.count
-			item.quaff(player) if item && item.is_a?(Items::Potion)
+			item = player.inventory[index] if index < player.inventory.count
+			
+			if item && item.is_a?(Items::Potion)
+				item.quaff(player)
+			else
+				$status_view.add_to_buffer("You don't have that item.")
+				$status_view.draw_buffer
+			end
 				
 		#misc
 		when '?'
@@ -128,7 +160,6 @@ module PlayerAI #player controlled
 			$status_view.add_to_buffer("'i' - display inventory, 'e' - display equipment.")
 			$status_view.add_to_buffer("Good luck.")
 			$status_view.draw_buffer
-			$status_view.refresh
 				
 			key = Input.get_key($main_view.window)
 			player.act(key)
@@ -139,7 +170,6 @@ module PlayerAI #player controlled
 			$status_view.add_to_buffer("I don't know that key,")
 			$status_view.add_to_buffer("Click '?' for help")
 			$status_view.draw_buffer
-			$status_view.refresh
 				
 			key = Input.get_key($main_view.window)
 			player.act(key)

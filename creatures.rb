@@ -85,7 +85,7 @@ module Creatures
 			i = 11
 			j = 0
 			@inventory.each {|item|
-				view.draw(0, i, "#{j}: #{item.name}", colour)
+				view.draw(0, i, "#{$alphabet[j]}: #{item.name}", colour)
 				i += 1
 				j += 1}
 			
@@ -95,7 +95,7 @@ module Creatures
 			i += 1
 			j = 0
 			@equipment.each {|item|
-				view.draw(0, i, "#{j}: #{item.name}", colour)
+				view.draw(0, i, "#{$alphabet[j]}: #{item.name}", colour)
 				i += 1
 				j += 1}
 		end

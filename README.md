@@ -37,8 +37,6 @@ git clone https://github.com/MatijaSi/Welmish-Woundikins.git
 
 ruby main.rb
 
-Maybe you will have to install the curses gem: gem install curses
-
 If you have Windows, good luck (maybe try cygwin?). It was only tested on linux.
 
 ### Controls:
