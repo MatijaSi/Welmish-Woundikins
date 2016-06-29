@@ -133,8 +133,8 @@ module PlayerAI #player controlled
 		end
 			
 		#recalc damage
-		if player.hp <= player.max_hp / 6 && player.class == "Barbarian"
-			player.dmg += 5
+		if player.hp <= player.max_hp / 6 && player.is_a?(Creatures::Barbarian)
+			player.dmg += 1
 		end
 			
 		monster = Mapping.exists($monsters, player.x + dirx, player.y + diry) 

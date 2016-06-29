@@ -34,13 +34,17 @@ $map = Mapping::Map.new(0, 0, 100, 100)
 coords = $map.populate
 
 #generate player
-if pclass == 'a' || pclass == 'b' || pclass == 'c'
-	$player = Creatures::Player.new(coords[0], coords[1], name, pclass)
+if pclass == 'b'
+	$player = Creatures::Player.new(coords[0], coords[1], name)
+elsif pclass == 'a'
+	$player = Creatures::Rogue.new(coords[0], coords[1], name)
+elsif pclass == 'c'
+	$player = Creatures::Barbarian.new(coords[0], coords[1], name)
 elsif pclass == 'g'
-	$player = Creatures::Goblin.new(coords[0], coords[1])
+	$player = Creatures::Goblin.new(coords[0], coords[1], name)
 	$player.player = true
 elsif pclass == 's'
-	$player = Creatures::Scoundrel.new(coords[0], coords[1])
+	$player = Creatures::Scoundrel.new(coords[0], coords[1], name)
 	$player.player = true
 end
 

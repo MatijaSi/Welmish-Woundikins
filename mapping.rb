@@ -28,7 +28,7 @@ module Mapping
 			
 			#make rogue see monsters fovs
 			in_monster = false
-			if $player.class == "Rogue"
+			if $player.is_a?(Creatures::Rogue)
 				$monsters.each {|monster|
 					if in_fov?(monster) && monster.in_fov?($player)
 						colour = monster.colour

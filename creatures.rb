@@ -5,21 +5,21 @@ require_relative "ai.rb"
 
 module Creatures
 	class GenericCreature < Mapping::Tile
-		def initialize(x, y)
-			super
+		def initialize(x, y, name = "Cthulhu")
+			super(x, y)
 			@char = 'C'
 			@blocked = nil
 			@fov = 5
 			@max_hp = 50
 			@hp = @max_hp
 			@dmg = 12
-			@name = "Cthulhu"
+			@name = name
 			@colour = Output::Colours::RED
 			@colour_not_fov = Output::Colours::BLACK
 			@regen = 1
 			@type = :monster
 			@player = false
-			@class = "Marauder"
+			@class = "Abyssal one"
 			@kills = 0
 			
 			@inventory = []
@@ -101,7 +101,7 @@ module Creatures
 	end
 	
 	class Player < GenericCreature
-		def initialize(x, y, name, pclass)
+		def initialize(x, y, name)
 			super(x, y)
 			@char = '@'
 			@name = name.capitalize
@@ -109,23 +109,13 @@ module Creatures
 			@kills = 0
 			@player = true
 			
-			case pclass
-			when 'b'
-				@class = "Warrior"
-			when 'a'
-				@class = "Rogue"
-			when 'c'
-				@class = "Barbarian"
-			end
+			@class = "Warrior"
 			
-			@fov = 4 if @class == "Warrior" || @class == "Barbarian"
-			@fov = 6 if @class == "Rogue"
+			@fov = 4
 			
 			@max_hp = 100
-			@max_hp = 80 if @class == "Barbarian"
 			@hp = @max_hp
-			@dmg = 10 if @class == "Rogue"
-			@dmg = 15 if @class == "Warrior" || @class == "Barbarian"
+			@dmg = 15
 			
 			@colour = Output::Colours::YELLOW
 			@regen = 2
@@ -136,15 +126,41 @@ module Creatures
 		end
 	end
 	
+	class Rogue < Player
+		def initialize(x, y, name)
+			super
+
+			@class = "Rogue"
+			@fov = 6 if @class == "Rogue"
+			
+			@max_hp = 100
+			@hp = @max_hp
+			@dmg = 10 if @class == "Rogue"
+		end
+	end
+	
+	class Barbarian < Player
+		def initialize(x, y, name)
+			super
+			@class = "Barbarian"
+			
+			@fov = 4
+			@max_hp = 80
+			@hp = @max_hp
+			@dmg = 15
+		end
+	end
+	
 	class Goblin < GenericCreature
-		def initialize(x, y)
+		def initialize(x, y, name = "Goblin")
 			super
 			@char = 'G'
 			@dmg = 12
 			@max_hp = 40
 			@hp = @max_hp
-			@name = "Goblin"
+			@name = name
 			@colour = Output::Colours::GREEN
+			@class = "Marauder"
 		end
 		
 		def act(key = false)
@@ -163,15 +179,16 @@ module Creatures
 	end
 	
 	class GoblinWarlord < Goblin
-		def initialize(x, y)
+		def initialize(x, y, name = "Goblin Warlord")
 			super
 			@char = 'G'
-			@name = "Goblin Warlord"
+			@name = name
 			@colour = Output::Colours::RED
 			@dmg = 15
 			@max_hp = 50
 			@hp = @max_hp
 			@regen = 3
+			@class = "War Leader"
 		end
 		
 		def act(key = false)
@@ -212,12 +229,13 @@ module Creatures
 	end
 	
 	class Scoundrel < Goblin
-		def initialize(x, y)
+		def initialize(x, y, name = "Scoundrel")
 			super
 			@char = 'S'
 			@dmg = 10
-			@name = "Scoundrel"
+			@name = name
 			@colour = Output::Colours::CYAN
+			@class = "Bandit"
 		end
 		
 		def act(key = false)
@@ -234,16 +252,17 @@ module Creatures
 	end
 	
 	class Nazgul < Goblin
-		def initialize(x, y)
+		def initialize(x, y, name = "Nazgul")
 			super
 			@char = 'N'
 			@dmg = 20
 			@max_hp = 100
 			@hp = @max_hp
-			@name = "Nazgul"
+			@name = name
 			@regen = 1
 			@colour = Output::Colours::RED
 			@fov = 8
+			@class = "Dark One"
 		end
 		
 		def death
@@ -261,15 +280,16 @@ module Creatures
 	end
 	
 	class Bomber < Goblin
-		def initialize(x, y)
+		def initialize(x, y, name = "Bomber")
 			super
 			@char = 'B'
 			@dmg = 1
 			@max_hp = 5
 			@hp = @max_hp
-			@name = "Bomber"
+			@name = name
 			@regen = 0
 			@colour = Output::Colours::RED
+			@class = "Hopeful"
 		end
 		
 		def act(key = false)
