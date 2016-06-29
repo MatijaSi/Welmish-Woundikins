@@ -61,7 +61,7 @@ Probably won't be followed, they are there just to give you an idea what's in th
 
 3%    - Items and new monsters.
 
-4%    - Better combat system, simple magic
+4%    - Better combat system(elemental damage, ranged weapons), simple magic (ala magic missile, heal self)
 
 5%    - "Social" mode (talking with friendly creatures)
 
