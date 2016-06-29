@@ -23,11 +23,15 @@ Map generators: Cavernous (drunkard walk alghoritm), Mazes (lots of corridors), 
 Items: Weapons, Armours, Potions of healing, Potions of poison, Teleport scrolls.
 
 ### Installation:
-You will need to have one of the newer versions of Ruby installed and maybe the curses gem.
+Linux:
+1) Install dependencies (you do not need git if you manually download the source code):
+sudo apt-get install ruby2.0 libncurses5 git
+2) Clone the repository (unnecessary if you manually download the source):
+git clone https://github.com/MatijaSi/Welmish-Woundikins.git
+3) Run the game from the Welmish-Woundikins directory:
+ruby main.rb
 
-Clone/download and run in terminal: ruby main.rb
-
-It should work on Linux (and other *nixes), however if it doesn't, make sure you have ncurses installed. If you have Windows, good luck (maybe try cygwin?). It was only tested on linux.
+If you have Windows, good luck (maybe try cygwin?). It was only tested on linux.
 
 ### Controls:
 Nethack keys to move and attack, for up-left move/attack you can use either y or z.
