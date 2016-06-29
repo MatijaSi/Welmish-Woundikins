@@ -55,7 +55,7 @@ Probably won't be followed, they are there just to give you an idea what's in th
 
 5%    - "Social" mode (talking with friendly creatures)
 
-6%    - Map features (dwellings, temples, burrows, ...), floors (stairs).
+6%    - New room-based mapgenerator (to make descriptions of sorroundings possible) with cavernous rooms, usual rooms, lakes, canyons, ... Map features (dwellings, temples, burrows, ...), floors (stairs).
 
 ...
 
