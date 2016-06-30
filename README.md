@@ -51,11 +51,12 @@ pacman -S git ruby base-devel gcc gmp-devel libcrypt-devel ncurses-devel
 
 3) Make sure ruby gems are in the $PATH. To do this, edit the file: msys**/home/USER/.bashrc and add the following lines, then restart msys:
 
-#### Local Ruby gems inclusion.
+```
+# Local Ruby gems inclusion.
 if which ruby >/dev/null && which gem >/dev/null; then
     PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:$PATH"
 fi
-
+```
 4) Install the curses gem (this will take a little while):
 
 gem install curses
