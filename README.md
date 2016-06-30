@@ -23,8 +23,7 @@ Map generators: Cavernous (drunkard walk alghoritm), Mazes (lots of corridors), 
 
 Items: Weapons, Armours, Potions of healing, Potions of poison, Teleport scrolls.
 
-### Installation:
-Linux:
+### Linux
 
 1) Install dependencies (you do not need git if you manually download the source code):
 
@@ -38,9 +37,36 @@ git clone https://github.com/MatijaSi/Welmish-Woundikins.git
 
 ruby main.rb
 
-Maybe you will need to install curses gem: gem install curses
+4) (Optional) You may need to install curses gem
 
-If you have Windows, good luck (maybe try cygwin?). It was only tested on linux.
+gem install curses
+
+### Windows (Msys2)
+
+1) Get Msys2 from http://msys2.github.io and follow the installation instructions (close and reopen after each step).
+
+2) Install dependencies (you do not need git if you manually download the source code) (this will take a little while:
+
+pacman -S git ruby base-devel gcc gmp-devel libcrypt-devel ncurses-devel
+
+3) Make sure ruby gems are in the $PATH. To do this, edit the file: msys**/home/USER/.bashrc and add the following lines, then restart msys:
+
+# Local Ruby gems inclusion.
+if which ruby >/dev/null && which gem >/dev/null; then
+    PATH="$(ruby -rubygems -e 'puts Gem.user_dir')/bin:$PATH"
+fi
+
+4) Install the curses gem (this will take a little while):
+
+gem install curses
+
+5) Clone the repository (unnecessary if you manually download the source):
+
+git clone https://github.com/MatijaSi/Welmish-Woundikins.git
+
+6) Run the game from the Welmish-Woundikins directory:
+
+ruby main.rb
 
 ### Controls:
 Nethack keys to move and attack, for up-left move/attack you can use either y or z.
