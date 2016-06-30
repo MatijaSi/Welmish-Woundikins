@@ -125,10 +125,11 @@ module Creatures
 			@type = :player
 			@kills = 0
 			@player = true
+			@visible = true
 			
 			@class = "Warrior"
 			
-			@fov = 4
+			@fov = 6
 			
 			@max_hp = 100
 			@hp = @max_hp
@@ -148,7 +149,7 @@ module Creatures
 			super
 
 			@class = "Rogue"
-			@fov = 6
+			@fov = 8 
 			
 			@max_hp = 100
 			@hp = @max_hp
@@ -161,7 +162,7 @@ module Creatures
 			super
 			@class = "Barbarian"
 			
-			@fov = 4
+			@fov = 6
 			@max_hp = 80
 			@hp = @max_hp
 			@dmg = 15
@@ -174,7 +175,7 @@ module Creatures
 			@class = "Hoplite"
 			@equipment = [Items::Weapon.new(@x, @y, "|", "Spear", 5, 0),
 										Items::Shield.new(@x, @y, "]", "Shield", 0, 8)]
-			@fov = 5
+			@fov = 7
 			@max_hp = 90
 			@hp = @max_hp
 			@dmg = 10 + @equipment[0].dmg_bonus

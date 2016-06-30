@@ -85,7 +85,7 @@ module PlayerAI #player controlled
 			index = $alphabet.index(char)
 				
 			item = false
-			item = player.inventory[index] if index < player.inventory.count
+			item = player.inventory[index] if index || index < player.inventory.count
 			
 			if item && item.is_a?(Items::Wearable)
 				slots_taken = 0

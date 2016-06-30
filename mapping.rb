@@ -11,6 +11,7 @@ module Mapping
 			@colour_not_fov = Output::Colours::BLUE
 			@seen = false
 			@type = :tile
+			@visible = false #for players fov
 		end
 		
 		def draw(view)
@@ -31,7 +32,7 @@ module Mapping
 				in_monster = false
 				if $player.is_a?(Creatures::Rogue)
 					$monsters.each {|monster|
-						if in_fov?(monster) && monster.in_fov?($player)
+						if in_fov?(monster) && monster.visible
 							colour = monster.colour
 							in_monster = true
 							break
@@ -43,7 +44,7 @@ module Mapping
 					colour = @colour
 				end
 			
-				if in_fov?($player)
+				if @visible
 					view.draw(x, y, @char, colour)
 					@seen = true
 				elsif $player.class == "Rogue" && in_monster && @seen
@@ -55,20 +56,62 @@ module Mapping
 		end
 		
 		def in_fov?(player)
-			px = player.x
-			py = player.y
-			tx = @x
-			ty = @y
-			fov = player.fov
-			cond_distance = (((tx - px).abs * (tx - px).abs + (ty - py).abs * (ty - py).abs) <= (fov * fov))
-			return_value = false
-			return_value = true if cond_distance
+			if player.type == :player
+				return @visible 
+			else
+				px = player.x
+				py = player.y
+				tx = @x
+				ty = @y
+				fov = player.fov
+				cond_distance = (((tx - px).abs * (tx - px).abs + (ty - py).abs * (ty - py).abs) <= (fov * fov))
+				return_value = false
+				return_value = true if cond_distance
 
-			return return_value
+				return return_value
+			end
 		end
 		
 		attr_reader :blocked, :colour, :colour_not_fov, :type
-		attr_accessor :x, :y
+		attr_accessor :x, :y, :visible
+	end
+	
+	def self.recalc_fov(player)
+		working_array = $items + $monsters + $map.tiles
+		working_array.each {|tile| tile.visible = false}
+		#center coords
+		px = player.x
+		py = player.y
+		
+		#radius
+		fov = player.fov
+		
+		#ray tracing
+		i = 0
+		while i < 135
+			x = px
+			y = py
+			ax = Math.sin(i)
+			ay = Math.cos(i)
+			
+			j = 0
+			while j < 2 * fov
+				x += ax
+				y += ay
+				
+				tile = false
+				tile = Mapping.exists(working_array, x.round, y.round)
+				if (not tile) || tile.blocked
+					tile.visible = true
+					break
+				else
+					tile.visible = true
+				end
+				j += 3
+			end
+			i += 3
+		end
+		
 	end
 	
 	class Ground < Tile

@@ -85,6 +85,7 @@ end
 $monsters.push(Creatures::Nazgul.new(tile.x, tile.y))
 
 #initial draw (so screen isn't empty before input)
+Mapping.recalc_fov($player)
 $map.draw($main_view)
 $player.draw($main_view)
 $items.each {|item| item.draw($main_view)}
@@ -119,6 +120,7 @@ while 1
 			$player.kills += 1
 		end}
 	
+	Mapping.recalc_fov($player)
 	$main_view.clear
 	$map.draw($main_view)
 	$items.each {|item| item.draw($main_view)}
