@@ -1,4 +1,4 @@
-# Welmish Woundikins 3%
+# Welmish Woundikins 3,3%
 Made using Ruby and Curses.
 
 ### Please note:
@@ -13,6 +13,8 @@ This is very early alpha, so there are some things you have to do to use it succ
 Raytracing fov, hoplite class.
 
 You now have nearby monster list in player menu.
+
+New combat system (elemental damage, resistances), overhauled item generation.
 
 ### Current version:
 Three player classes: Warriors (decent damage, more health than barbarians, smaller fov), Rogues (smaller damage, same health as warriors, bigger fov, can see fovs of monsters (useful for stealthing past them)) and Barbarians (smaller health, bigger damage when close to death). Or you can play as a goblin or as a scoundrel.
@@ -91,7 +93,7 @@ Probably won't be followed, they are there just to give you an idea what's in th
 
 3%    - Items and new monsters.
 
-4%    - Better combat system (ranged combat, monster infighting, elemental damage and resistances), simple magic(ala magic missile, heal self)
+4%    - Better combat system (ranged combat, elemental damage and resistances), simple magic(ala magic missile, heal self)
 
 5%    - "Social" mode (talking with friendly creatures)
 
