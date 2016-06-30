@@ -10,6 +10,8 @@ This is very early alpha, so there are some things you have to do to use it succ
 
 
 ### New:
+Identifying items (they must be in inventory though) and examining items or monsters.
+
 Raytracing fov, hoplite class.
 
 You now have nearby monster list in player menu.
@@ -23,7 +25,7 @@ Monsters: Goblins, Goblin Warlords (summoners), Scoundrels (run away when wounde
 
 Map generators: Cavernous (drunkard walk alghoritm), Mazes (lots of corridors), Rooms (tend to generate big, merged rooms)
 
-Items: Weapons, Armours, Potions of healing, Potions of poison, Teleport scrolls.
+Items: Weapons, Armours, Potions of healing, Potions of poison, Teleport scrolls, Scrolls of Identify.
 
 ### Linux
 
@@ -76,7 +78,7 @@ Nethack keys to move and attack, for up-left move/attack you can use either y or
 
 '?' for help, 'Q' to quit, '.' to wait one turn.
 
-'i' - inventory, 'e' - equipment.
+'i' - inventory, 'e' - equipment, 'x' - examine item/monster.
 
 ',' - pick up, 'd' - drop, 'w' - wear/wield, 'q' - quaff, 'r' - read, 't' - take off.
 
