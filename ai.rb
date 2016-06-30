@@ -94,7 +94,7 @@ module PlayerAI #player controlled
 				if slots_taken < player.slots[item.slot]
 					item.wear(player) 
 				else
-					$status_view.add_to_buffer("You don't have enough #{item.slot}s!")
+					$status_view.add_to_buffer("You don't have enough #{item.slot}s.")
 					$status_view.draw_buffer
 				end
 			else
@@ -177,7 +177,7 @@ module PlayerAI #player controlled
 			
 		#recalc damage
 		if player.hp <= player.max_hp / 6 && player.is_a?(Creatures::Barbarian)
-			player.dmg += 1
+			player.dmg[0] += 1
 		end
 			
 		monster = Mapping.exists($monsters, player.x + dirx, player.y + diry) 
@@ -185,8 +185,7 @@ module PlayerAI #player controlled
 			Combat.attack(player, monster)
 		else
 			unless Mapping.exists($map.tiles, player.x + dirx, player.y + diry).blocked
-				player.move(dirx, diry) 
-				Mapping.recalc_fov($player)
+				player.move(dirx, diry)
 			end
 		end
 			

@@ -12,7 +12,8 @@ module Creatures
 			@fov = 5
 			@max_hp = 50
 			@hp = @max_hp
-			@dmg = 12
+			@dmg = [2, 5, 25, 0] #fire, ice, poison, light
+			@res = [5, 10, 25, 0] #resistances in percents, order is the same as with @dmg
 			@name = name
 			@colour = Output::Colours::RED
 			@colour_not_fov = Output::Colours::BLACK
@@ -74,15 +75,16 @@ module Creatures
 		def state(view)
 			colour = Output::Colours::WHITE
 			view.draw(0, 0, "#{@name} the #{@class}", colour)
-			view.draw(0, 1, "x: #{@x}", colour)
-			view.draw(0, 2, "y: #{@y}", colour)
-			view.draw(0, 4, "health: #{@hp}/#{@max_hp}", colour)
-			view.draw(0, 5, "regen per turn: #{@regen}", colour)
-			view.draw(0, 6, "damage: #{@dmg}", colour)
-			view.draw(0, 8, "kills: #{@kills}", colour)
-			view.draw(0, 10, "Inventory:", colour)
+			view.draw(0, 1, "health: #{@hp}/#{@max_hp}", colour)
+			view.draw(0, 3, "Damage\\Resistance:", colour)
+			view.draw(0, 4, "Fire: #{@dmg[0]}\\#{@res[0]}%", Output::Colours::RED)
+			view.draw(0, 5, "Ice: #{@dmg[1]}\\#{@res[1]}%", Output::Colours::CYAN)
+			view.draw(0, 6, "Poison: #{@dmg[2]}\\#{@res[2]}%", Output::Colours::GREEN)
+			view.draw(0, 7, "Light: #{@dmg[3]}\\#{@res[3]}%", Output::Colours::YELLOW)
 			
-			i = 11
+			view.draw(0, 9, "Inventory:", colour)
+			
+			i = 10
 			j = 0
 			@inventory.each {|item|
 				view.draw(0, i, "#{$alphabet[j]}: #{item.name}", colour)
@@ -124,7 +126,7 @@ module Creatures
 		end
 		
 		attr_reader :fov, :name, :class, :slots
-		attr_accessor :hp, :dmg, :max_hp, :equipment, :inventory, :player, :kills
+		attr_accessor :hp, :dmg, :max_hp, :equipment, :inventory, :player, :kills, :res
 	end
 	
 	class Player < GenericCreature
@@ -143,7 +145,8 @@ module Creatures
 			
 			@max_hp = 100
 			@hp = @max_hp
-			@dmg = 15
+			@dmg = [15, 0, 0, 5]
+			@res = [20, 20, 20, 20]
 			
 			@colour = Output::Colours::YELLOW
 			@regen = 2
@@ -163,7 +166,8 @@ module Creatures
 			
 			@max_hp = 100
 			@hp = @max_hp
-			@dmg = 10
+			@dmg = [10, 2, 5, 0]
+			@res = [10, 25, 30, 0]
 		end
 	end
 	
@@ -175,7 +179,7 @@ module Creatures
 			@fov = 6
 			@max_hp = 80
 			@hp = @max_hp
-			@dmg = 15
+			@dmg = [10, 10, 5, 5]
 		end
 	end
 	
@@ -183,12 +187,12 @@ module Creatures
 		def initialize(x, y, name)
 			super
 			@class = "Hoplite"
-			@equipment = [Items::Weapon.new(@x, @y, "|", "Spear", 5, 0),
-										Items::Shield.new(@x, @y, "]", "Shield", 0, 8)]
+			@inventory = [Items::Weapon.new(@x, @y, "|", "Spear", [5, 0, 0, 5], 0, [0, 0, 0, 0]),
+										Items::Shield.new(x, y, ']', "Shield", [0, 0, 0, 0], 8, [8, 6, 8, 3])]
 			@fov = 7
 			@max_hp = 90
 			@hp = @max_hp
-			@dmg = 10 + @equipment[0].dmg_bonus
+			@dmg = [5, 5, 0, 5]
 		end
 	end
 	
@@ -196,7 +200,7 @@ module Creatures
 		def initialize(x, y, name = "Goblin")
 			super
 			@char = 'G'
-			@dmg = 12
+			@dmg = [7, 8, 15, 0]
 			@max_hp = 40
 			@hp = @max_hp
 			@name = name
@@ -225,7 +229,7 @@ module Creatures
 			@char = 'G'
 			@name = name
 			@colour = Output::Colours::RED
-			@dmg = 15
+			@dmg = [15, 5, 15, 0]
 			@max_hp = 50
 			@hp = @max_hp
 			@regen = 3
@@ -273,10 +277,10 @@ module Creatures
 		def initialize(x, y, name = "Scoundrel")
 			super
 			@char = 'S'
-			@dmg = 10
 			@name = name
 			@colour = Output::Colours::CYAN
 			@class = "Bandit"
+			@dmg = [2, 5, 18, 0]
 		end
 		
 		def act(key = false)
@@ -296,7 +300,8 @@ module Creatures
 		def initialize(x, y, name = "Nazgul")
 			super
 			@char = 'N'
-			@dmg = 20
+			@dmg = [30, 0, 15, 0]
+			@res = [60, 40, 40, 10]
 			@max_hp = 100
 			@hp = @max_hp
 			@name = name
@@ -324,7 +329,8 @@ module Creatures
 		def initialize(x, y, name = "Bomber")
 			super
 			@char = 'B'
-			@dmg = 1
+			@dmg = [1, 0, 0, 0]
+			@res = [0, 0, 0, 0]
 			@max_hp = 5
 			@hp = @max_hp
 			@name = name

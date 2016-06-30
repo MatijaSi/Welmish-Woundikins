@@ -102,6 +102,7 @@ while 1
 	$player_view.clear
 	$player.state($player_view)
 	$player_view.refresh
+	Mapping.recalc_fov($player)
 	
 	#$main_view.window.box('*', '*') #for window border, it flashes annoying sometimes though
 	
