@@ -98,6 +98,16 @@ module Creatures
 				view.draw(0, i, "#{$alphabet[j]}: #{item.name}", colour)
 				i += 1
 				j += 1}
+				
+			i += 1
+			view.draw(0, i, "Nearby:", colour)
+			i += 1
+			$monsters.each {|monster|
+				if monster.visible
+					view.draw(0, i, "#{monster.name}", monster.colour)
+					i += 1
+				end}
+				
 		end
 		
 		def act(key = false)
