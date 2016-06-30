@@ -6,6 +6,7 @@ This is very early alpha, so there are some things you have to do to use it succ
 
 1. Make sure the terminal in which you run the game is big enough (otherwise menus won't show)
 2. Mapgen takes a lot of time, so be patient.
+3. Game runs a little slow, since FoV wasn't yet optimised.
 
 
 ### New:
