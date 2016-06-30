@@ -9,9 +9,7 @@ This is very early alpha, so there are some things you have to do to use it succ
 
 
 ### New:
-Items! Weapons, armour, potions and scrolls. Added picking up items, dropping them, wearing/wielding, taking them off, reading and quaffing (the usual). Wearables increase your damage and/or health, while potions may either heal or poison you and scrolls teleport you.
-
-Playable monsters, only goblins and scoundrels for now, though.
+Raytracing fov, hoplite class.
 
 ### Current version:
 Three player classes: Warriors (decent damage, more health than barbarians, smaller fov), Rogues (smaller damage, same health as warriors, bigger fov, can see fovs of monsters (useful for stealthing past them)) and Barbarians (smaller health, bigger damage when close to death). Or you can play as a goblin or as a scoundrel.
@@ -37,6 +35,8 @@ git clone https://github.com/MatijaSi/Welmish-Woundikins.git
 
 ruby main.rb
 
+Maybe you will need to install curses gem: gem install curses
+
 If you have Windows, good luck (maybe try cygwin?). It was only tested on linux.
 
 ### Controls:
@@ -61,7 +61,7 @@ Probably won't be followed, they are there just to give you an idea what's in th
 
 3%    - Items and new monsters.
 
-4%    - Better combat system, simple magic
+4%    - Better combat system (ranged combat, monster infighting), simple magic(ala magic missile, heal self)
 
 5%    - "Social" mode (talking with friendly creatures)
 
@@ -69,7 +69,7 @@ Probably won't be followed, they are there just to give you an idea what's in th
 
 ...
 
-10%   - Crafting, ritual based magic system
+10%   - Crafting (based on imbuing items with rare materials or spells, enchanting them with essences), ritual based magic system (based on crafting)
 
 20%   - First version of story generator
 
