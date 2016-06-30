@@ -12,6 +12,8 @@ This is very early alpha, so there are some things you have to do to use it succ
 ### New:
 Raytracing fov, hoplite class.
 
+You now have nearby monster list in player menu.
+
 ### Current version:
 Three player classes: Warriors (decent damage, more health than barbarians, smaller fov), Rogues (smaller damage, same health as warriors, bigger fov, can see fovs of monsters (useful for stealthing past them)) and Barbarians (smaller health, bigger damage when close to death). Or you can play as a goblin or as a scoundrel.
 
