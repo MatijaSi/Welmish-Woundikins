@@ -118,9 +118,9 @@ while 1
 		if monster.hp <= 0
 			monster.death
 			$player.kills += 1
+			Mapping.recalc_fov($player)
 		end}
-	
-	Mapping.recalc_fov($player)
+
 	$main_view.clear
 	$map.draw($main_view)
 	$items.each {|item| item.draw($main_view)}

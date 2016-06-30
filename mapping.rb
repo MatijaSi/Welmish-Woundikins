@@ -32,7 +32,7 @@ module Mapping
 				in_monster = false
 				if $player.is_a?(Creatures::Rogue)
 					$monsters.each {|monster|
-						if in_fov?(monster) && monster.visible
+						if monster.visible && in_fov?(monster) 
 							colour = monster.colour
 							in_monster = true
 							break
@@ -56,19 +56,68 @@ module Mapping
 		end
 		
 		def in_fov?(player)
-			if player.type == :player
+			if player.player == true
 				return @visible 
 			else
-				px = player.x
-				py = player.y
-				tx = @x
-				ty = @y
-				fov = player.fov
-				cond_distance = (((tx - px).abs * (tx - px).abs + (ty - py).abs * (ty - py).abs) <= (fov * fov))
-				return_value = false
-				return_value = true if cond_distance
-
-				return return_value
+				if ((@x - player.x).abs < player.fov) && ((@y - player.y).abs < player.fov)
+					array = []
+					$map.tiles.each {|tile|
+						array.push(tile) if ((tile.x - player.x).abs < player.fov) && ((tile.y - player.y).abs < player.fov)}	
+						
+					delta_x = @x - player.x
+					delta_y = @y - player.y
+					
+					sign_x = delta_x / delta_x.abs unless delta_x == 0
+					sign_y = delta_y / delta_y.abs unless delta_y == 0
+					
+					sign_x = 1 if delta_x == 0
+					sign_y = 1 if delta_y == 0
+					
+					px = player.x
+					py = player.y
+					
+					if delta_x.abs > delta_y.abs
+						t = delta_y.abs * 2 - delta_x.abs
+						
+						tile =  Mapping.exists(array, px, py)
+						while tile && (not tile.blocked)
+							if t >= 0
+								py += sign_y
+								t -= delta_x.abs * 2
+							end
+						
+							px += sign_x
+							t += delta_y.abs * 2
+						
+							if px == @x && py == @y
+								return true
+							end
+							
+							tile =  Mapping.exists(array, px, py)
+						end
+						return false
+					else
+						t = delta_x.abs * 2 - delta_y.abs
+					
+						tile =  Mapping.exists(array, px, py)
+						while tile && (not tile.blocked)
+							if t >= 0
+								px += sign_x
+								t -= delta_y.abs * 2
+							end
+						
+							py += sign_y
+							t += delta_x.abs * 2
+						
+							if px == @x && py == @y
+								return true
+							end
+							
+							tile =  Mapping.exists(array, px, py)
+						end
+						return false
+					end
+				end
 			end
 		end
 		

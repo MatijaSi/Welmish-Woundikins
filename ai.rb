@@ -184,7 +184,10 @@ module PlayerAI #player controlled
 		if monster
 			Combat.attack(player, monster)
 		else
-			player.move(dirx, diry) unless Mapping.exists($map.tiles, player.x + dirx, player.y + diry).blocked
+			unless Mapping.exists($map.tiles, player.x + dirx, player.y + diry).blocked
+				player.move(dirx, diry) 
+				Mapping.recalc_fov($player)
+			end
 		end
 			
 		true
