@@ -51,7 +51,7 @@ elsif pclass == 's'
 end
 
 #spawn items
-num = rand(5..10)
+num = rand(5..12)
 $items = Items.items_generator(num, $map)
 
 #spawn monsters

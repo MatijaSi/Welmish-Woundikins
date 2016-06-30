@@ -11,11 +11,12 @@ module Items
 			@blocked = nil
 			@type = :item
 			@name = name
-			@realname = name
+			@realname = realname
 			@desc = description
+			@identified = false
 		end
 		
-		attr_accessor :name
+		attr_accessor :name, :identified
 		attr_reader :realname, :desc
 		
 		def pick_up(player)
@@ -36,6 +37,16 @@ module Items
 			$status_view.add_to_buffer("You drop #{@name}!")
 			$status_view.draw_buffer
 			$status_view.refresh
+		end
+		
+		def describe
+			$status_view.add_to_buffer("#{@name}. #{@desc}")
+			$status_view.draw_buffer
+		end
+		
+		def identify
+			@name = @realname
+			@identified = true
 		end
 	end
 	
@@ -94,6 +105,18 @@ module Items
 			player.res[3] -= @res_bonus[3]
 			
 			player.max_hp -= @hp_bonus
+		end
+		
+		def describe
+			super
+			if @identified
+				$status_view.add_to_buffer("Slot: #{@slot} Health: #{@hp_bonus}")
+				$status_view.add_to_buffer("Fire: #{@dmg_bonus[0]} / #{@res_bonus[0]}")
+				$status_view.add_to_buffer("Ice: #{@dmg_bonus[1]} / #{@res_bonus[1]}")
+				$status_view.add_to_buffer("Poison: #{@dmg_bonus[2]} / #{@res_bonus[2]}")
+				$status_view.add_to_buffer("Light: #{@dmg_bonus[3]} / #{@res_bonus[3]}")
+				$status_view.draw_buffer
+			end
 		end
 	end
 	
@@ -191,8 +214,36 @@ module Items
 		end
 	end
 	
+	class IdentifyScroll < Scroll
+		def read(player)
+			super
+			$status_view.add_to_buffer("It's one of the scrolls of ancient lore.")
+			$status_view.add_to_buffer("Identify which item?")
+			$status_view.draw_buffer
+			item = false
+			
+			until item && (not item.identified)
+				char = Input.get_key($main_view.window)
+				index = $alphabet.index(char)
+				
+				item = player.inventory[index] if index < player.inventory.count
+				
+				unless item && (not item.identified)
+					$status_view.add_to_buffer("Choose another item. Or 'Q' to stop identifying")
+					$status_view.draw_buffer
+				end
+				
+				break if char == 'Q'
+			end
+			
+			item.identify
+			$status_view.add_to_buffer("It's #{item.name}")
+			$status_view.draw_buffer
+		end
+	end
+	
 	def self.item_generator(x, y) #generate one item
-		n = rand(1..6)
+		n = rand(1..8)
 		
 		case n
 		when 1
@@ -201,6 +252,8 @@ module Items
 			item = Items::PoisonPotion.new(x, y, "!", "Potion", "Poison", "Burbling green liquid")
 		when 3
 			item = Items::TeleportScroll.new(x, y, "?", "Scroll", "Teleport Scroll", "Scroll full of ancient runes")
+		when 4
+			item = Items::IdentifyScroll.new(x, y, "?", "Scroll", "Identify Scroll", "Scroll full of ancient runes")
 		else
 			n = rand(1..7)
 			case n

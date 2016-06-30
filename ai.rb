@@ -85,7 +85,7 @@ module PlayerAI #player controlled
 			index = $alphabet.index(char)
 				
 			item = false
-			item = player.inventory[index] if index || index < player.inventory.count
+			item = player.inventory[index] if index && index < player.inventory.count
 			
 			if item && item.is_a?(Items::Wearable)
 				slots_taken = 0
@@ -109,7 +109,7 @@ module PlayerAI #player controlled
 			index = $alphabet.index(char)
 				
 			item = false
-			item = player.equipment[index] if index < player.equipment.count
+			item = player.equipment[index] if index && index < player.equipment.count
 			
 			if item 
 				item.take_off(player)
@@ -126,7 +126,7 @@ module PlayerAI #player controlled
 			index = $alphabet.index(char)
 				
 			item = false
-			item = player.inventory[index] if index < player.inventory.count
+			item = player.inventory[index] if index && index < player.inventory.count
 			
 			if item && item.is_a?(Items::Scroll)
 				item.read(player) 
@@ -142,7 +142,7 @@ module PlayerAI #player controlled
 			index = $alphabet.index(char)
 				
 			item = false
-			item = player.inventory[index] if index < player.inventory.count
+			item = player.inventory[index] if index && index < player.inventory.count
 			
 			if item && item.is_a?(Items::Potion)
 				item.quaff(player)
@@ -152,12 +152,95 @@ module PlayerAI #player controlled
 			end
 				
 		#misc
-		when '?'
+		when 'x' #examine item or monster
+			$status_view.add_to_buffer("Examine 'i'nventory, 'e'quipment or 'm'onster?")
+			$status_view.draw_buffer
+			
+			until char == 'e' || char == 'i' || char == 'm'
+				char = Input.get_key($main_view.window)
+			end
+			
+			case char
+			when 'i'
+				$status_view.add_to_buffer("Which item?")
+				$status_view.draw_buffer
+				
+				char = Input.get_key($main_view.window)
+				index = $alphabet.index(char)
+				
+				item = false
+				item = player.inventory[index] if index && index < player.inventory.count
+			
+				if item
+					item.describe
+				else
+				$status_view.add_to_buffer("You don't have that item.")
+				$status_view.draw_buffer
+				end
+			when 'e'
+				$status_view.add_to_buffer("Which worn item?")
+				$status_view.draw_buffer
+				
+				char = Input.get_key($main_view.window)
+				index = $alphabet.index(char)
+				
+				item = false
+				item = player.equipment[index] if index && index < player.equipment.count
+			
+				if item
+					item.describe
+				else
+				$status_view.add_to_buffer("You don't have that item.")
+				$status_view.draw_buffer
+				end
+				
+			when 'm'
+				$status_view.add_to_buffer("'g' - goblin, 'w' - goblin warlord, 's' - scoundrel")
+				$status_view.add_to_buffer("'b' - bomber or 'n' - nazgul?")
+				$status_view.draw_buffer
+				
+				char = false
+				until char == 'g' || char == 'w' || char == 's' || char == 'b' || char == 'n'
+					char = Input.get_key($main_view.window)
+					unless char == 'g' || char == 'w' || char == 's' || char == 'b' || char == 'n'
+						$status_view.add_to_buffer("Which monster?")
+						$status_view.draw_buffer
+					end
+				end
+				
+				case char
+				when 'g'
+					$status_view.add_to_buffer("Goblins are small and snarling creatures.")
+					$status_view.add_to_buffer("They are poisonous and fear the light.")
+					$status_view.draw_buffer
+				when 'w'
+					$status_view.add_to_buffer("War leaders of goblins.")
+					$status_view.add_to_buffer("Stronger than usual goblins and they can summon them at will.")
+					$status_view.draw_buffer
+				when 's'
+					$status_view.add_to_buffer("Scoundrels, dastardly creatures.")
+					$status_view.add_to_buffer("Their daggers are poisoned and they forgot the light.")
+					$status_view.draw_buffer
+				when 'b'
+					$status_view.add_to_buffer("Bombers have their reasons.")
+					$status_view.add_to_buffer("They will explode into your face")
+					$status_view.draw_buffer
+				when 'n'
+					$status_view.add_to_buffer("Nazgul, a practically legendary creature")
+					$status_view.add_to_buffer("He is a reason you are here.")
+					$status_view.draw_buffer
+				end
+				
+				key = Input.get_key($main_view.window)
+				player.act(key)
+			end
+			
+		when '?' #help
 			$status_view.add_to_buffer("Nethack keys for movement and attacking,")
 			$status_view.add_to_buffer("',' to pick up item, 'd' to drop it")
 			$status_view.add_to_buffer("'w' - wear/wield, 't' - take off,  'q' - quaff, 'r' - read")
 			$status_view.add_to_buffer("'?' for help, 'Q' to quit, '.' to wait")
-			$status_view.add_to_buffer("'i' - display inventory, 'e' - display equipment.")
+			$status_view.add_to_buffer("'i' - display inventory, 'e' - display equipment, 'x' - examine")
 			$status_view.add_to_buffer("Good luck.")
 			$status_view.draw_buffer
 				
