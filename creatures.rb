@@ -187,8 +187,8 @@ module Creatures
 		def initialize(x, y, name)
 			super
 			@class = "Hoplite"
-			@inventory = [Items::Weapon.new(@x, @y, "|", "Spear", [5, 0, 0, 5], 0, [0, 0, 0, 0]),
-										Items::Shield.new(x, y, ']', "Shield", [0, 0, 0, 0], 8, [8, 6, 8, 3])]
+			@inventory = [Items::Weapon.new(@x, @y, "|", "Spear", "Spear", "A pointy stick", [5, 0, 0, 5], 0, [0, 0, 0, 0]),
+										Items::Shield.new(x, y, ']', "Shield", "Shield", "Forged in Athens", [0, 0, 0, 0], 8, [8, 6, 8, 3])]
 			@fov = 7
 			@max_hp = 90
 			@hp = @max_hp
@@ -302,7 +302,7 @@ module Creatures
 			@char = 'N'
 			@dmg = [30, 0, 15, 0]
 			@res = [60, 40, 40, 10]
-			@max_hp = 100
+			@max_hp = 160
 			@hp = @max_hp
 			@name = name
 			@regen = 1
