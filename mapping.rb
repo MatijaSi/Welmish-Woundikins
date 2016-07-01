@@ -11,7 +11,6 @@ module Mapping
 			@colour_not_fov = Output::Colours::BLUE
 			@seen = false
 			@type = :tile
-			@visible = false #for players fov
 		end
 		
 		def draw(view)
@@ -32,7 +31,7 @@ module Mapping
 				in_monster = false
 				if $player.is_a?(Creatures::Rogue)
 					$monsters.each {|monster|
-						if monster.visible && in_fov?(monster) 
+						if monster.in_fov?($player) && in_fov?(monster) 
 							colour = monster.colour
 							in_monster = true
 							break
@@ -44,7 +43,7 @@ module Mapping
 					colour = @colour
 				end
 			
-				if @visible
+				if in_fov?($player)
 					view.draw(x, y, @char, colour)
 					@seen = true
 				elsif $player.class == "Rogue" && in_monster && @seen
@@ -56,78 +55,23 @@ module Mapping
 		end
 		
 		def in_fov?(player)
-			if player.player == true
-				return @visible 
+			if self == player
+				return true
+			elsif Mapping.exists(player.fov_tiles, @x, @y)
+				return true
 			else
-				if ((@x - player.x).abs < player.fov) && ((@y - player.y).abs < player.fov)
-					array = []
-					$map.tiles.each {|tile|
-						array.push(tile) if ((tile.x - player.x).abs < player.fov) && ((tile.y - player.y).abs < player.fov)}	
-						
-					delta_x = @x - player.x
-					delta_y = @y - player.y
-					
-					sign_x = delta_x / delta_x.abs unless delta_x == 0
-					sign_y = delta_y / delta_y.abs unless delta_y == 0
-					
-					sign_x = 1 if delta_x == 0
-					sign_y = 1 if delta_y == 0
-					
-					px = player.x
-					py = player.y
-					
-					if delta_x.abs > delta_y.abs
-						t = delta_y.abs * 2 - delta_x.abs
-						
-						tile =  Mapping.exists(array, px, py)
-						while tile && (not tile.blocked)
-							if t >= 0
-								py += sign_y
-								t -= delta_x.abs * 2
-							end
-						
-							px += sign_x
-							t += delta_y.abs * 2
-						
-							if px == @x && py == @y
-								return true
-							end
-							
-							tile =  Mapping.exists(array, px, py)
-						end
-						return false
-					else
-						t = delta_x.abs * 2 - delta_y.abs
-					
-						tile =  Mapping.exists(array, px, py)
-						while tile && (not tile.blocked)
-							if t >= 0
-								px += sign_x
-								t -= delta_y.abs * 2
-							end
-						
-							py += sign_y
-							t += delta_x.abs * 2
-						
-							if px == @x && py == @y
-								return true
-							end
-							
-							tile =  Mapping.exists(array, px, py)
-						end
-						return false
-					end
-				end
+				return false
 			end
 		end
 		
 		attr_reader :blocked, :colour, :colour_not_fov, :type
-		attr_accessor :x, :y, :visible
+		attr_accessor :x, :y
 	end
 	
 	def self.recalc_fov(player)
 		working_array = $items + $monsters + $map.tiles
-		working_array.each {|tile| tile.visible = false}
+		working_array.push($player) if player != $player
+		player.fov_tiles = []
 		#center coords
 		px = player.x
 		py = player.y
@@ -135,30 +79,34 @@ module Mapping
 		#radius
 		fov = player.fov
 		
+		#limit and step
+		limit = 135
+		step = 3
+
 		#ray tracing
 		i = 0
-		while i < 135
+		while i < limit
 			x = px
 			y = py
 			ax = Math.sin(i)
 			ay = Math.cos(i)
 			
 			j = 0
-			while j < 2 * fov
+			while j < fov
 				x += ax
 				y += ay
 				
 				tile = false
 				tile = Mapping.exists(working_array, x.round, y.round)
 				if (not tile) || tile.blocked
-					tile.visible = true
+					player.fov_tiles.push(tile)
 					break
 				else
-					tile.visible = true
+					player.fov_tiles.push(tile)
 				end
-				j += 3
+				j += step
 			end
-			i += 3
+			i += step
 		end
 		
 	end

@@ -218,15 +218,29 @@ module Items
 		def read(player)
 			super
 			$status_view.add_to_buffer("It's one of the scrolls of ancient lore.")
-			$status_view.add_to_buffer("Identify which item?")
+			$status_view.add_to_buffer("Identify in 'i'nventory or in 'e'quipment?")
 			$status_view.draw_buffer
 			item = false
+			char = false
+			
+			until char == 'i' || char == 'e'
+				char = Input.get_key($main_view.window)
+			end
+			
+			if char == 'i'
+				place = player.inventory
+			elsif char == 'e'
+				place = player.equipment
+			end
+			
+			$status_view.add_to_buffer("Which item?")
+			$status_view.draw_buffer
 			
 			until item && (not item.identified)
 				char = Input.get_key($main_view.window)
 				index = $alphabet.index(char)
 				
-				item = player.inventory[index] if index < player.inventory.count
+				item = place[index] if index < place.count
 				
 				unless item && (not item.identified)
 					$status_view.add_to_buffer("Choose another item. Or 'Q' to stop identifying")
@@ -251,7 +265,7 @@ module Items
 		when 2
 			item = Items::PoisonPotion.new(x, y, "!", "Potion", "Poison", "Burbling green liquid")
 		when 3
-			item = Items::TeleportScroll.new(x, y, "?", "Scroll", "Teleport Scroll", "Scroll full of ancient runes")
+			item = Items::TeleportScroll.new(x, y, "?", "Scroll", "Teleport Scroll", "Scroll full of crawling runes")
 		when 4
 			item = Items::IdentifyScroll.new(x, y, "?", "Scroll", "Identify Scroll", "Scroll full of ancient runes")
 		else

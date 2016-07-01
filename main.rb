@@ -30,7 +30,7 @@ $status_view = Output::StatusView.new(0, MAIN_SIZE[1], STATUS_SIZE[0], STATUS_SI
 $player_view = Output::View.new(MAIN_SIZE[0], 0, PLAYER_SIZE[0], PLAYER_SIZE[1])
 
 #generate map
-$map = Mapping::Map.new(0, 0, 100, 100)
+$map = Mapping::Map.new(0, 0, 70, 70)
 coords = $map.populate
 
 #generate player
@@ -51,12 +51,12 @@ elsif pclass == 's'
 end
 
 #spawn items
-num = rand(5..12)
+num = rand(4..8)
 $items = Items.items_generator(num, $map)
 
 #spawn monsters
 $monsters = []
-number = rand(7..21)
+number = rand(5..10)
 i = 0
 until i >= number
 	tile = false
@@ -86,6 +86,7 @@ $monsters.push(Creatures::Nazgul.new(tile.x, tile.y))
 
 #initial draw (so screen isn't empty before input)
 Mapping.recalc_fov($player)
+$monsters.each {|monster| Mapping.recalc_fov(monster)}
 $map.draw($main_view)
 $player.draw($main_view)
 $items.each {|item| item.draw($main_view)}
@@ -128,6 +129,7 @@ while 1
 	$player.draw($main_view)
 	
 	$monsters.each {|monster|
+		Mapping.recalc_fov(monster)
 		monster.draw($main_view)
 		monster.act
 		monster.regen}

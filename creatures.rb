@@ -22,6 +22,7 @@ module Creatures
 			@player = false
 			@class = "Abyssal one"
 			@kills = 0
+			@fov_tiles = []
 			
 			@inventory = []
 			@equipment = []
@@ -105,7 +106,7 @@ module Creatures
 			view.draw(0, i, "Nearby:", colour)
 			i += 1
 			$monsters.each {|monster|
-				if monster.visible
+				if monster.in_fov?(self)
 					view.draw(0, i, "#{monster.name}", monster.colour)
 					i += 1
 				end}
@@ -126,7 +127,7 @@ module Creatures
 		end
 		
 		attr_reader :fov, :name, :class, :slots
-		attr_accessor :hp, :dmg, :max_hp, :equipment, :inventory, :player, :kills, :res
+		attr_accessor :hp, :dmg, :max_hp, :equipment, :inventory, :player, :kills, :res, :fov_tiles
 	end
 	
 	class Player < GenericCreature
@@ -137,11 +138,10 @@ module Creatures
 			@type = :player
 			@kills = 0
 			@player = true
-			@visible = true
 			
 			@class = "Warrior"
 			
-			@fov = 6
+			@fov = 8
 			
 			@max_hp = 100
 			@hp = @max_hp
@@ -162,7 +162,7 @@ module Creatures
 			super
 
 			@class = "Rogue"
-			@fov = 8 
+			@fov = 12
 			
 			@max_hp = 100
 			@hp = @max_hp
@@ -176,7 +176,7 @@ module Creatures
 			super
 			@class = "Barbarian"
 			
-			@fov = 6
+			@fov = 8
 			@max_hp = 80
 			@hp = @max_hp
 			@dmg = [10, 10, 5, 5]
@@ -189,7 +189,7 @@ module Creatures
 			@class = "Hoplite"
 			@inventory = [Items::Weapon.new(@x, @y, "|", "Spear", "Spear", "A pointy stick", [5, 0, 0, 5], 0, [0, 0, 0, 0]),
 										Items::Shield.new(x, y, ']', "Shield", "Shield", "Forged in Athens", [0, 0, 0, 0], 8, [8, 6, 8, 3])]
-			@fov = 7
+			@fov = 10
 			@max_hp = 90
 			@hp = @max_hp
 			@dmg = [5, 5, 0, 5]
