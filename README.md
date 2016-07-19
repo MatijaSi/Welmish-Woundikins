@@ -1,14 +1,8 @@
 # Welmish Woundikins 3,3%
 Made using Ruby and Curses.
 
-### Please note:
-This is very early alpha, so there are some things you have to do to use it successfully:
-
-1. Make sure the terminal in which you run the game is big enough (otherwise menus won't show)
-2. Mapgen takes a lot of time, so be patient.
-3. Game runs a little slow, since FoV wasn't yet optimised.
-4. Until 19th of july I won't be able to program much, so if you get any good idea just open an issue/PR. Same for bugs.
-
+#### I am currently preparing a big update, which will change most of the codebase. Feel free to play this version and check out the devblog:
+http://welmish.blogspot.si/
 
 ### New:
 Identifying items (they must be in inventory though) and examining items or monsters.
