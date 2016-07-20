@@ -2,6 +2,7 @@ require_relative "output.rb"
 require_relative "input.rb"
 require_relative "mapping.rb"
 require_relative "creatures.rb"
+require_relative "config.rb"
 
 #player generation
 $player = Creatures::Player.new(0, 0, 0)
@@ -16,8 +17,7 @@ $player.name = pname
 $player.class = pclass
 
 #level generation
-MAP_SIZE = [100, 100]
-Mapping.level_generator(MAP_SIZE[0], MAP_SIZE[1], rand(15..30), $player)
+Mapping.level_generator(MAP_SIZE[0], MAP_SIZE[1], rand(MONSTER_NUMBER[0]..MONSTER_NUMBER[1]), $player)
 
 #item generation
 

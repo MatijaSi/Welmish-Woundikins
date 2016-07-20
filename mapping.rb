@@ -61,7 +61,7 @@ module Mapping
 		
 		def teleport(player)
 			if player.x == @x && player.y == @y
-				Mapping.level_generator(MAP_SIZE[0], MAP_SIZE[1], rand(5..15), player)
+				Mapping.level_generator(MAP_SIZE[0], MAP_SIZE[1], rand(MONSTER_NUMBER[0]..MONSTER_NUMBER[1]), player)
 				player.mirrors_passed += 1
 				$status_view.add_to_buffer("You pass through a mirror")
 				$status_view.draw_buffer
