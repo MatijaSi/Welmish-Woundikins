@@ -1,4 +1,4 @@
-# Welmish Woundikins 3,3%
+# Welmish Woundikins
 Made using Ruby and Curses.
 
 ### DevBlog:
@@ -6,6 +6,8 @@ http://welmish.blogspot.si/
 
 ### Please note:
 You will need to have a 256 colour supporting terminal. While most terminals today support 256 colours, most do not report themselves as such. Because of that you will have to temporarily change TERM variable in linux (for windows I don't have a clue).
+
+If game runs slow you can change the number of monsters (will have bigger impact) or map size in file config.rb
 
 ### Linux
 
