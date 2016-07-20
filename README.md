@@ -23,7 +23,9 @@ ruby main.rb
 
 3) (Alternative) If colours don't work, you will have to run the program with changed TERM variable:
 if your terminal is xterm:
-`env TERM=xterm-256color ruby main.rb
+
+env TERM=xterm-256color ruby main.rb
+
 for other terminals the change is similar.
 
 4) (Optional) You may need to install curses gem
