@@ -1,310 +1,160 @@
-#File with mixins defining monster actions
-require_relative "mapping.rb"
+require_relative "output.rb"
 require_relative "input.rb"
+require_relative "combat.rb"
 
-$alphabet = []
-('a'..'z').each {|char| $alphabet.push(char)}
-
-module PlayerAI #player controlled
-	def self.act(key, player)
-		#default movement values
-		dirx = 0
-		diry = 0
+module Ai
+	module SimpleRoutines
+		def self.random_move(actor, map, monsters)
+			dirs = [-1, 0, 1]
 			
-		case key 
+			dir_x = dirs.sample
+			dir_y = dirs.sample
 			
-		#movement (and combat)
-		when 'k' #up
-			diry = -1
-		when 'j' #down
-			diry = 1
-		when 'h' #left
-			dirx = -1
-		when 'l' #right
-			dirx = 1
-		when 'y' , 'z' #up-left
-			dirx = -1
-			diry = -1
-		when 'u' #up-right
-			dirx = 1
-			diry = -1
-		when 'b' #down-left
-			dirx = -1
-			diry = 1
-		when 'n' #down-right
-			dirx = 1
-			diry = 1
-		when '.' #wait
-			dirx = 0
-			diry = 0
+			new_x = actor.x + dir_x
+			new_y = actor.y + dir_y
 			
-		#item manipulationg
-		when ',' #pick item up
-			item = Mapping.exists($items, player.x, player.y)
+			there_monster = false
 			
-			if item
-				item.pick_up(player)
-			else
-				$status_view.add_to_buffer("You see no items here.")
-				$status_view.draw_buffer
-			end
-		when 'd' #drop item
-			$status_view.add_to_buffer("Which item?")
-			$status_view.draw_buffer
+			monsters.each {|monster|
+				if monster.x == new_x && monster.y == new_y && monster != actor
+					there_monster = monster
+				end}
 			
-			index = Input.get_key($main_view.window)
-				
-			item = false
-			item = player.inventory[index.to_i] if index.to_i < player.inventory.count
-			if item
-				item.drop(player) 
-			else
-				$status_view.add_to_buffer("You don't have that item.")
-				$status_view.draw_buffer
-			end
-		when 'i' #display inventory
-			$status_view.add_to_buffer("Inventory:")
-			i = 0
-			player.inventory.each {|item| 
-				$status_view.add_to_buffer("#{$alphabet[i]}: #{item.name}")
-				i += 1}
-
-			$status_view.draw_buffer
-		when 'e' #display equipment
-			$status_view.add_to_buffer("Equipment:")
-			i = 0
-			player.equipment.each {|item|
-				$status_view.add_to_buffer("#{$alphabet[i]}: #{item.name}")
-				i += 1}
-			$status_view.draw_buffer
-		when 'w' #wear or wield
-			$status_view.add_to_buffer("Which item?")
-			$status_view.draw_buffer
-				
-			char = Input.get_key($main_view.window)
-			index = $alphabet.index(char)
-				
-			item = false
-			item = player.inventory[index] if index && index < player.inventory.count
-			
-			if item && item.is_a?(Items::Wearable)
-				slots_taken = 0
-				player.equipment.each {|nitem| slots_taken += 1 if nitem.slot == item.slot}
-				
-				if slots_taken < player.slots[item.slot]
-					item.wear(player) 
-				else
-					$status_view.add_to_buffer("You don't have enough #{item.slot}s.")
-					$status_view.draw_buffer
+			if there_monster
+				Combat.attack(actor, there_monster)
+			elsif not (((new_x) > (map.tiles.size - 1)) || ((new_x) < 0) || ((new_y) > (map.tiles[0].size - 1)) || ((new_y) < 0))
+				if not map.tiles[new_x][new_y].blocked
+					actor.move(dir_x, dir_y)
 				end
-			else
-				$status_view.add_to_buffer("You don't have that item.")
-				$status_view.draw_buffer
-			end
-		when 't' #take off
-			$status_view.add_to_buffer("Which item?")
-			$status_view.draw_buffer
-				
-			char = Input.get_key($main_view.window)
-			index = $alphabet.index(char)
-				
-			item = false
-			item = player.equipment[index] if index && index < player.equipment.count
-			
-			if item 
-				item.take_off(player)
-			else
-				$status_view.add_to_buffer("You don't have that item.")
-				$status_view.draw_buffer
-			end
-			
-		when 'r' #read
-			$status_view.add_to_buffer("Which item?")
-			$status_view.draw_buffer
-				
-			char = Input.get_key($main_view.window)
-			index = $alphabet.index(char)
-				
-			item = false
-			item = player.inventory[index] if index && index < player.inventory.count
-			
-			if item && item.is_a?(Items::Scroll)
-				item.read(player) 
-			else
-				$status_view.add_to_buffer("You don't have that item.")
-				$status_view.draw_buffer
-			end
-		when 'q' #quaff
-			$status_view.add_to_buffer("Which item?")
-			$status_view.draw_buffer
-				
-			char = Input.get_key($main_view.window)
-			index = $alphabet.index(char)
-				
-			item = false
-			item = player.inventory[index] if index && index < player.inventory.count
-			
-			if item && item.is_a?(Items::Potion)
-				item.quaff(player)
-			else
-				$status_view.add_to_buffer("You don't have that item.")
-				$status_view.draw_buffer
-			end
-				
-		#misc
-		when 'x' #examine item or monster
-			$status_view.add_to_buffer("Examine 'i'nventory, 'e'quipment or 'm'onster?")
-			$status_view.draw_buffer
-			
-			until char == 'e' || char == 'i' || char == 'm'
-				char = Input.get_key($main_view.window)
-			end
-			
-			case char
-			when 'i'
-				$status_view.add_to_buffer("Which item?")
-				$status_view.draw_buffer
-				
-				char = Input.get_key($main_view.window)
-				index = $alphabet.index(char)
-				
-				item = false
-				item = player.inventory[index] if index && index < player.inventory.count
-			
-				if item
-					item.describe
-				else
-				$status_view.add_to_buffer("You don't have that item.")
-				$status_view.draw_buffer
-				end
-			when 'e'
-				$status_view.add_to_buffer("Which worn item?")
-				$status_view.draw_buffer
-				
-				char = Input.get_key($main_view.window)
-				index = $alphabet.index(char)
-				
-				item = false
-				item = player.equipment[index] if index && index < player.equipment.count
-			
-				if item
-					item.describe
-				else
-				$status_view.add_to_buffer("You don't have that item.")
-				$status_view.draw_buffer
-				end
-				
-			when 'm'
-				$status_view.add_to_buffer("'g' - goblin, 'w' - goblin warlord, 's' - scoundrel")
-				$status_view.add_to_buffer("'b' - bomber or 'n' - nazgul?")
-				$status_view.draw_buffer
-				
-				char = false
-				until char == 'g' || char == 'w' || char == 's' || char == 'b' || char == 'n'
-					char = Input.get_key($main_view.window)
-					unless char == 'g' || char == 'w' || char == 's' || char == 'b' || char == 'n'
-						$status_view.add_to_buffer("Which monster?")
-						$status_view.draw_buffer
-					end
-				end
-				
-				case char
-				when 'g'
-					$status_view.add_to_buffer("Goblins are small and snarling creatures.")
-					$status_view.add_to_buffer("They are poisonous and fear the light.")
-					$status_view.draw_buffer
-				when 'w'
-					$status_view.add_to_buffer("War leaders of goblins.")
-					$status_view.add_to_buffer("Stronger than usual goblins and they can summon them at will.")
-					$status_view.draw_buffer
-				when 's'
-					$status_view.add_to_buffer("Scoundrels, dastardly creatures.")
-					$status_view.add_to_buffer("Their daggers are poisoned and they forgot the light.")
-					$status_view.draw_buffer
-				when 'b'
-					$status_view.add_to_buffer("Bombers have their reasons.")
-					$status_view.add_to_buffer("They will explode into your face")
-					$status_view.draw_buffer
-				when 'n'
-					$status_view.add_to_buffer("Nazgul, a practically legendary creature")
-					$status_view.add_to_buffer("He is a reason you are here.")
-					$status_view.draw_buffer
-				end
-				
-				key = Input.get_key($main_view.window)
-				player.act(key)
-			end
-			
-		when '?' #help
-			$status_view.add_to_buffer("Nethack keys for movement and attacking,")
-			$status_view.add_to_buffer("',' to pick up item, 'd' to drop it")
-			$status_view.add_to_buffer("'w' - wear/wield, 't' - take off,  'q' - quaff, 'r' - read")
-			$status_view.add_to_buffer("'?' for help, 'Q' to quit, '.' to wait")
-			$status_view.add_to_buffer("'i' - display inventory, 'e' - display equipment, 'x' - examine")
-			$status_view.add_to_buffer("Good luck.")
-			$status_view.draw_buffer
-				
-			key = Input.get_key($main_view.window)
-			player.act(key)
-		when 'Q' #exit
-			Output.close_console
-			exit
-		else
-			$status_view.add_to_buffer("I don't know that key,")
-			$status_view.add_to_buffer("Click '?' for help")
-			$status_view.draw_buffer
-				
-			key = Input.get_key($main_view.window)
-			player.act(key)
-		end
-			
-		#recalc damage
-		if player.hp <= player.max_hp / 6 && player.is_a?(Creatures::Barbarian)
-			player.dmg[0] += 1
-		end
-			
-		monster = Mapping.exists($monsters, player.x + dirx, player.y + diry) 
-		if monster
-			Combat.attack(player, monster)
-		else
-			unless Mapping.exists($map.tiles, player.x + dirx, player.y + diry).blocked
-				player.move(dirx, diry)
 			end
 		end
+		
+		def self.target_in_fov(actor, monsters)
+			target = false
+			monsters.each {|monster|
+				target = monster if actor.in_fov?(monster) && monster != actor}
+			return target
+		end
+		
+		def self.seek_target(actor, target, map, monsters)
+			dir_x = ((target.x - actor.x) / (target.x - actor.x).abs) unless target.x == actor.x
+			dir_x = 0 if target.x == actor.x
+				
+			dir_y = ((target.y - actor.y) / (target.y - actor.y).abs) unless target.y == actor.y
+			dir_y = 0 if target.y == actor.y
 			
-		true
+			new_x = actor.x + dir_x
+			new_y = actor.y + dir_y
+			
+			there_monster = false
+			
+			monsters.each {|monster|
+				if monster.x == new_x && monster.y == new_y && monster != actor
+					there_monster = monster
+				end}
+			
+			if there_monster
+				Combat.attack(actor, there_monster)
+			elsif not map.tiles[new_x][new_y].blocked
+				actor.move(dir_x, dir_y)
+			end
+		end
+		
+		def self.run_away_from_target(actor, target, map, monsters)
+			dir_x = ((target.x - actor.x) / (target.x - actor.x).abs) unless target.x == actor.x
+			dir_x = 0 if target.x == actor.x
+				
+			dir_y = ((target.y - actor.y) / (target.y - actor.y).abs) unless target.y == actor.y
+			dir_y = 0 if target.y == actor.y
+			
+			dir_x = - dir_x
+			dir_y = - dir_y
+			
+			new_x = actor.x + dir_x
+			new_y = actor.y + dir_y
+			
+			there_monster = false
+			
+			monsters.each {|monster|
+				if monster.x == new_x && monster.y == new_y && monster != actor
+					there_monster = monster
+				end}
+			
+			if there_monster
+				Combat.attack(actor, there_monster)
+			elsif not map.tiles[new_x][new_y].blocked
+				actor.move(dir_x, dir_y)
+			end
+		end
 	end
-end
-
-module RandomAI #move randomly around
-	def self.act(player)
-		dirs = [-1, 0, +1]
-		xdir = dirs.sample
-		ydir = dirs.sample
-		player.move(xdir, ydir) unless (not Mapping.exists($map.tiles, player.x + xdir, player.y + ydir)) || Mapping.exists($map.tiles, player.x + xdir, player.y + ydir).blocked
-	end
-end
-
-module SeekerAI #move towards player
-	def self.act(player)
-		xdir = (($player.x - player.x) / ($player.x - player.x).abs) unless $player.x == player.x
-		xdir = 0 if $player.x == player.x
-				
-		ydir = (($player.y - player.y) / ($player.y - player.y).abs) unless $player.y == player.y
-		ydir = 0 if $player.y == player.y
-				
-		player.move(xdir, ydir) unless (not Mapping.exists($map.tiles, player.x + xdir, player.y + ydir)) || Mapping.exists($monsters, player.x + xdir, player.y + ydir) || (player.x + xdir == $player.x && player.y + ydir == $player.y) || Mapping.exists($map.tiles, player.x + xdir, player.y + ydir).blocked
-	end
-end
-
-module RunnerAI #move away from player
-	def self.act(player)
-		xdir = -(($player.x - player.x) / ($player.x - player.x).abs) unless $player.x == player.x
-		xdir = 0 if $player.x == player.x
-				
-		ydir = -(($player.y - player.y) / ($player.y - player.y).abs) unless $player.y == player.y
-		ydir = 0 if $player.y == player.y
-				
-		player.move(xdir, ydir) unless Mapping.exists($map.tiles, player.x + xdir, player.y + ydir).blocked || Mapping.exists($monsters, player.x + xdir, player.y + ydir) || (player.x + xdir == $player.x && player.y + ydir == $player.y)
+	
+	module Player
+		def self.control_player(actor, key, map, monsters) #items)
+			case key
+			when "k", "j", "h", "l", "z", "y", "b", "n", "u"
+				Ai::Player.movement(actor, key, map, monsters)
+			when "?", "Q"
+				Ai::Player.misc(key)
+			end
+		end
+		
+		def self.movement(actor, key, map, monsters)
+			dir_x = 0
+			dir_y = 0
+			
+			case key 
+			#movement (and combat)
+			when 'k' #up
+				dir_y = -1
+			when 'j' #down
+				dir_y = 1
+			when 'h' #left
+				dir_x = -1
+			when 'l' #right
+				dir_x = 1
+			when 'y' , 'z' #up-left
+				dir_x = -1
+				dir_y = -1
+			when 'u' #up-right
+				dir_x = 1
+				dir_y = -1
+			when 'b' #down-left
+				dir_x = -1
+				dir_y = 1
+			when 'n' #down-right
+				dir_x = 1
+				dir_y = 1
+			end
+			
+			new_x = actor.x + dir_x
+			new_y = actor.y + dir_y
+			there_monster = false
+			
+			monsters.each {|monster|
+				if monster.x == new_x && monster.y == new_y
+					there_monster = monster
+				end}
+			
+			if there_monster
+				Combat.attack(actor, there_monster)
+			elsif not map.tiles[new_x][new_y].blocked
+				actor.move(dir_x, dir_y)
+			end
+		end
+		
+		def self.item_manipulation(actor, key, items)
+		end
+		
+		def self.misc(key)
+			case key
+			when '?' #help
+				$status_view.add_to_buffer("Nethack keys to move/attack")
+				$status_view.add_to_buffer("'Q' to quit, '?' for help.")
+				$status_view.draw_buffer
+			when 'Q' #quit
+				Output.close_console
+				exit
+			end
+		end
 	end
 end

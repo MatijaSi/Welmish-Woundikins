@@ -1,373 +1,251 @@
-require_relative "mapping.rb"
-require_relative "combat.rb"
+require_relative "input.rb"
+require_relative "output.rb"
 require_relative "ai.rb"
-require_relative "items.rb"
 
 module Creatures
-	class GenericCreature < Mapping::Tile
-		def initialize(x, y, name = "Cthulhu")
-			super(x, y)
-			@char = 'C'
-			@blocked = nil
-			@fov = 5
-			@max_hp = 50
-			@hp = @max_hp
-			@dmg = [2, 5, 25, 0] #fire, ice, poison, light
-			@res = [5, 10, 25, 0] #resistances in percents, order is the same as with @dmg
-			@name = name
-			@colour = Output::Colours::RED
-			@colour_not_fov = Output::Colours::BLACK
-			@regen = 1
-			@type = :monster
-			@player = false
-			@class = "Abyssal one"
+	class Monster
+		def initialize(x, y, id)
+			@x = x
+			@y = y
+			@char = 'M'
+			@colour_in_fov = Output::Colours::RED
+			@name = "Monster"
+			@id = id
+			
 			@kills = 0
+			
 			@fov_tiles = []
+			@fov = 4
+			
+			@max_hp = 20
+			@hp = 20
+			@regen = 0.5
+			
+			@damages = {:fire => 0, :ice => 0, :light => 0, :dark => 0}
+			@resistances = {:fire => 0, :ice => 0, :light => 0, :dark => 0}
 			
 			@inventory = []
-			@equipment = []
-			
-			#number of inventory slots
-			@slots = {"arm" => 2, "head" => 1, "torso" => 1}
+			@equipment = {:head => nil, :left_hand => nil, :right_hand => nil, :left_finger => nil, :right_finger => nil, :body => nil, :feet => nil}
+		end
+		 
+		def death
+			if $player.in_fov?(self)
+				$status_view.add_to_buffer("#{@name} entered a new cycle.")
+			else
+				$status_view.add_to_buffer("You hear a faint scream.")
+			end
+			$monsters.delete(self)
 		end
 		
-		def regen #restore some of lost health
-			if @hp < @max_hp
+		def regen
+			if (@hp + @regen) < @max_hp
 				@hp += @regen
-				@hp = @max_hp if @hp > @max_hp
+			else
+				@hp = @max_hp
 			end
 		end
-		
-		def check_if_dead #only use with player controlled beings!
-			if @hp <= 0 && @player == true
-				$status_view.add_to_buffer("You died.")
-				$status_view.add_to_buffer("Press q to quit.")
-				$status_view.draw_buffer
 				
-				while 1
-					if Input.get_key($main_view.window) == 'q'
-						Output.close_console
-						exit
-					end
+		def draw(player)
+			x = @x - player.x
+			x += MAIN_SIZE[0] / 2
+			y = @y - player.y
+			y += MAIN_SIZE[1] / 2
+			
+			unless x > MAIN_SIZE[0] || x < 0 || y > MAIN_SIZE[1] || y < 0
+				if player == self || player.in_fov?(self)
+					$main_view.draw(x, y, @char, @colour_in_fov)
 				end
 			end
 		end
 		
-		def death
-			$status_view.add_to_buffer("#{@name} died.")
-			$status_view.draw_buffer
-			$monsters.delete(self)
-			
-			if rand(1..6) > 5 #drop an item
-				$items.push(Items.item_generator(@x, @y))
-				$status_view.add_to_buffer("#{@name} dropped something!.")
-				$status_view.draw_buffer
-			end
-			
-			#redraw screen
-			$main_view.clear
-			$map.draw($main_view)
-			$items.each {|item| item.draw($main_view)}
-			$player.draw($main_view)
-			$monsters.each {|monster| monster.draw($main_view)}
-			$main_view.refresh
+		def move(dir_x, dir_y)
+			@x += dir_x
+			@y += dir_y
 		end
 		
-		def state(view)
-			colour = Output::Colours::WHITE
-			view.draw(0, 0, "#{@name} the #{@class}", colour)
-			view.draw(0, 1, "health: #{@hp}/#{@max_hp}", colour)
-			view.draw(0, 3, "Damage\\Resistance:", colour)
-			view.draw(0, 4, "Fire: #{@dmg[0]}\\#{@res[0]}%", Output::Colours::RED)
-			view.draw(0, 5, "Ice: #{@dmg[1]}\\#{@res[1]}%", Output::Colours::CYAN)
-			view.draw(0, 6, "Poison: #{@dmg[2]}\\#{@res[2]}%", Output::Colours::GREEN)
-			view.draw(0, 7, "Light: #{@dmg[3]}\\#{@res[3]}%", Output::Colours::YELLOW)
+		def act(map)
+			Ai::SimpleRoutines.random_move(self, map, $monsters)
+		end
+		
+		def recalc_fov(map)
+			working_array = map.tiles
+			@fov_tiles = []
 			
-			view.draw(0, 9, "Inventory:", colour)
+			#center coords
+			px = @x
+			py = @y
+		
+			#limit and step
+			limit = 135
+			step = 3
+
+			#ray tracing
+			i = 0
+			while i < limit
+				x = px
+				y = py
+				ax = Math.sin(i)
+				ay = Math.cos(i)
 			
-			i = 10
-			j = 0
-			@inventory.each {|item|
-				view.draw(0, i, "#{$alphabet[j]}: #{item.name}", colour)
-				i += 1
-				j += 1}
-			
-			i += 1
-			view.draw(0, i, "Equipment:", colour)
-			
-			i += 1
-			j = 0
-			@equipment.each {|item|
-				view.draw(0, i, "#{$alphabet[j]}: #{item.name}", colour)
-				i += 1
-				j += 1}
+				j = 0
+				while j < 2 * @fov
+					x += ax
+					y += ay
 				
-			i += 1
-			view.draw(0, i, "Nearby:", colour)
-			i += 1
+					tile = false
+					tile = working_array[x.round][y.round] if not (((x) > (working_array.size - 1)) || ((x) < 0) || ((y) > (working_array[0].size - 1)) || ((y) < 0))
+					if (not tile) || tile.blocked
+						@fov_tiles.push(tile)
+						break
+					else
+						@fov_tiles.push(tile)
+					end
+					j += step
+				end
+				i += step
+			end
+		end
+		
+		def in_fov?(tile)
+			@fov_tiles.each {|fov_tile|
+				if fov_tile && fov_tile.x == tile.x && fov_tile.y == tile.y
+					return true
+				end}
+			false
+		end
+		
+		attr_reader :blocked, :seen, :fov_tiles, :name, :id, :char, :colour_in_fov
+		attr_accessor :hp, :max_hp, :damages, :resistances, :x, :y, :kills
+	end
+	
+	class Goblin < Monster
+		def initialize(x, y, id)
+			super
+			@char = 'G'
+			@colour_in_fov = Output::Colours::GREEN
+			@name = "Goblin"
+			
+			@fov = 5
+			
+			@damages = {:fire => 0, :ice => 5, :light => 0, :dark => 5}
+			@resistances = {:fire => 5, :ice => 15, :light => 0, :dark => 20}
+		end
+		
+		def act(map)
+			target = false
+			target = smart_target
+			
+			if target && @hp < (@max_hp / 4)
+				Ai::SimpleRoutines.run_away_from_target(self, target, $map, $monsters)
+			elsif target
+				Ai::SimpleRoutines.seek_target(self, target, $map, $monsters)
+			else
+				Ai::SimpleRoutines.random_move(self, map, $monsters)
+			end
+		end
+		
+		def smart_target
+			targets = []
+			$monsters.each {|monster| targets.push(monster) if self.in_fov?(monster) && monster.name != @name}
+			
+			if targets.count == 0
+				return false
+			else
+				return targets.sample
+			end
+		end
+	end
+	
+	class Elf < Goblin
+		def initialize(x, y, id)
+			super
+			@char = 'E'
+			@name = "Elf"
+			
+			@damages = {:fire => 5, :ice => 0, :light => 5, :dark => 0}
+			@resistances = {:fire => 15, :ice => 5, :light => 20, :dark => 0}
+		end
+	end
+	
+	class Player < Monster
+		def initialize(x, y, id)
+			super
+			@char = '@'
+			@colour_in_fov = Output::Colours::GOLD
+			@name = "Player"
+			@class = "Player"
+			
+			@mirrors_passed = 0
+			
+			@fov = 5
+			
+			@damages = {:fire => 8, :ice => 0, :light => 3, :dark => 0}
+			@resistances = {:fire => 10, :ice => 5, :light => 15, :dark => 0}
+		end
+		
+		attr_accessor :name, :class, :mirrors_passed
+		
+		def death
+			$status_view.add_to_buffer("You died. Press 'Q' to quit.")
+			Output.draw_gui_decorations(self)
+			self.state
+			$player_view.refresh
+			$status_view.refresh
+			key = false
+			until key == 'Q'
+				key = Input.get_key($main_view.window)
+			end
+			
+			Output.close_console
+			exit
+		end
+		
+		def state
+			colour = Output::Colours::GRAY
+			$player_view.draw(0, 0, "#{@name} the #{@class}", colour)
+			$player_view.draw(0, 1, "Kills: #{@kills}", colour)
+			$player_view.draw(0, 2, "Mirrors passed: #{@mirrors_passed}", colour)
+			
+			$player_view.draw(0, 4, "health: #{@hp}/#{@max_hp}", colour)
+			$player_view.draw(0, 5, "regen: #{@regen}", colour)
+			
+			$player_view.draw(0, 7, "Damage/Resistance:", colour)
+			$player_view.draw(0, 8, "Fire: #{@damages[:fire]}/#{@resistances[:fire]}%", Output::Colours::RED)
+			$player_view.draw(0, 9, "Ice: #{@damages[:ice]}/#{@resistances[:ice]}%", Output::Colours::CYAN)
+			$player_view.draw(0, 10, "Light: #{@damages[:light]}/#{@resistances[:light]}%", Output::Colours::YELLOW)
+			$player_view.draw(0, 11, "Dark: #{@damages[:dark]}/#{@resistances[:dark]}%", Output::Colours::PURPLE)
+			
+			$player_view.draw(0, 13, "Nearby:", colour)
+			i = 14
 			$monsters.each {|monster|
-				if monster.in_fov?(self)
-					view.draw(0, i, "#{monster.name}", monster.colour)
+				if self.in_fov?(monster) && (not monster.is_a?(Creatures::Player))
+					$player_view.draw(0, i, monster.name, colour)
+					$player_view.draw(0, i, monster.char, monster.colour_in_fov)
 					i += 1
 				end}
-				
+					
 		end
 		
-		def act(key = false)
-			if @player
-				PlayerAI.act(key, self)
-			else
-				RandomAI.act(self)
+		def act(map)
+			key = Input.get_key($main_view.window)
+			Ai::Player.control_player(self, key, map, $monsters)
+		end
+	end
+	
+	def self.creature_spawner(map, monsters, number)
+		i = 0
+		until i > number
+			coords = false
+			until coords
+				new_coords = $map.tiles.sample.sample
+				coords = new_coords if not new_coords.blocked
 			end
-		end
-		
-		def move(to_x, to_y)
-			@x += to_x
-			@y += to_y
-		end
-		
-		attr_reader :fov, :name, :class, :slots
-		attr_accessor :hp, :dmg, :max_hp, :equipment, :inventory, :player, :kills, :res, :fov_tiles
-	end
-	
-	class Player < GenericCreature
-		def initialize(x, y, name)
-			super(x, y)
-			@char = '@'
-			@name = name.capitalize
-			@type = :player
-			@kills = 0
-			@player = true
-			
-			@class = "Warrior"
-			
-			@fov = 8
-			
-			@max_hp = 100
-			@hp = @max_hp
-			@dmg = [15, 0, 0, 5]
-			@res = [20, 20, 20, 20]
-			
-			@colour = Output::Colours::YELLOW
-			@regen = 2
-		end
-		
-		def act(key)
-			PlayerAI.act(key, self)
-		end
-	end
-	
-	class Rogue < Player
-		def initialize(x, y, name)
-			super
-
-			@class = "Rogue"
-			@fov = 12
-			
-			@max_hp = 100
-			@hp = @max_hp
-			@dmg = [10, 2, 5, 0]
-			@res = [10, 25, 30, 0]
-		end
-	end
-	
-	class Barbarian < Player
-		def initialize(x, y, name)
-			super
-			@class = "Barbarian"
-			
-			@fov = 8
-			@max_hp = 80
-			@hp = @max_hp
-			@dmg = [10, 10, 5, 5]
-		end
-	end
-	
-	class Hoplite < Player
-		def initialize(x, y, name)
-			super
-			@class = "Hoplite"
-			@inventory = [Items::Weapon.new(@x, @y, "|", "Spear", "Spear", "A pointy stick", [5, 0, 0, 5], 0, [0, 0, 0, 0]),
-										Items::Shield.new(x, y, ']', "Shield", "Shield", "Forged in Athens", [0, 0, 0, 0], 8, [8, 6, 8, 3])]
-			@fov = 10
-			@max_hp = 90
-			@hp = @max_hp
-			@dmg = [5, 5, 0, 5]
-		end
-	end
-	
-	class Goblin < GenericCreature
-		def initialize(x, y, name = "Goblin")
-			super
-			@char = 'G'
-			@dmg = [7, 8, 15, 0]
-			@max_hp = 40
-			@hp = @max_hp
-			@name = name
-			@colour = Output::Colours::GREEN
-			@class = "Marauder"
-		end
-		
-		def act(key = false)
-			if @player
-				PlayerAI.act(key, self)
-			else
-				if (($player.x - @x) == 0 || ($player.x - @x).abs == 1) && (($player.y - @y) == 0 || ($player.y - @y).abs == 1)
-					Combat.attack(self, $player)
-				elsif $player.in_fov?(self)
-					SeekerAI.act(self)
+				if rand(1..6) > 3
+					monsters.push(Creatures::Elf.new(coords.x, coords.y, i))
 				else
-					RandomAI.act(self)
+					monsters.push(Creatures::Goblin.new(coords.x, coords.y, i))
 				end
-			end
-		end
-	end
-	
-	class GoblinWarlord < Goblin
-		def initialize(x, y, name = "Goblin Warlord")
-			super
-			@char = 'G'
-			@name = name
-			@colour = Output::Colours::RED
-			@dmg = [15, 5, 15, 0]
-			@max_hp = 50
-			@hp = @max_hp
-			@regen = 3
-			@class = "War Leader"
-		end
-		
-		def act(key = false)
-			if @player
-				PlayerAI.act(key, self)
-			else
-				if $player.in_fov?(self) && rand(1..6) == 6
-					$status_view.add_to_buffer("#{@name} summoned his followers!")
-					$status_view.draw_buffer
-					$status_view.refresh
-				
-					dirs = [-1, 0, 1]
-					i = 0
-					j = 0
-					num = 0
-					until i > 2
-						until j > 2
-							unless (Mapping.exists($map.tiles, @x + dirs[i], @y + dirs[j]).blocked) || (i == j && i == 0) || (Mapping.exists($monsters, @x + dirs[i], @y + dirs[j])) || ($player.x == @x + dirs[i] && $player.y == @y + dirs[j])
-								if rand(1..20) == 20
-									$monsters.push(GoblinWarlord.new(@x + dirs[i], @y + dirs[j]))
-								elsif rand(1..6) > 3
-									$monsters.push(Goblin.new(@x + dirs[i], @y + dirs[j]))
-									num += 1
-									break if num > 3
-								end
-							end
-						
-							j += 1
-						end
-						j = 0	
-						i += 1
-					end
-				else
-					super
-				end
-			end
-		end
-	end
-	
-	class Scoundrel < Goblin
-		def initialize(x, y, name = "Scoundrel")
-			super
-			@char = 'S'
-			@name = name
-			@colour = Output::Colours::CYAN
-			@class = "Bandit"
-			@dmg = [2, 5, 18, 0]
-		end
-		
-		def act(key = false)
-			if @player
-				PlayerAI.act(key, self)
-			else
-				if @hp < (@max_hp / 2) && $player.in_fov?(self) #run
-					RunnerAI.act(self)
-				else
-					super
-				end
-			end
-		end	
-	end
-	
-	class Nazgul < Goblin
-		def initialize(x, y, name = "Nazgul")
-			super
-			@char = 'N'
-			@dmg = [30, 0, 15, 0]
-			@res = [60, 40, 40, 10]
-			@max_hp = 160
-			@hp = @max_hp
-			@name = name
-			@regen = 1
-			@colour = Output::Colours::RED
-			@fov = 8
-			@class = "Dark One"
-		end
-		
-		def death
-			$status_view.add_to_buffer("Congrats! You won by killing the dark one.")
-			$status_view.add_to_buffer("Quit by pressing 'q'")
-			$status_view.draw_buffer
-		
-			while 1
-				if Input.get_key($main_view.window) == 'q'
-					Output.close_console
-					exit
-				end
-			end
-		end
-	end
-	
-	class Bomber < Goblin
-		def initialize(x, y, name = "Bomber")
-			super
-			@char = 'B'
-			@dmg = [1, 0, 0, 0]
-			@res = [0, 0, 0, 0]
-			@max_hp = 5
-			@hp = @max_hp
-			@name = name
-			@regen = 0
-			@colour = Output::Colours::RED
-			@class = "Hopeful"
-		end
-		
-		def act(key = false)
-			if @player
-				PlayerAI.act(key, self)
-			else
-				if ($player.x - @x).abs < 2 && ($player.y - @y).abs < 2
-					self.death
-				else
-					super
-				end
-			end
-		end
-		
-		def death
-			array = $monsters + [$player]
-			array.each {|being|
-				if (being.x - @x).abs < 3 && (being.y - @y).abs < 3
-					being.hp -= 30
-				end}
-			
-			$status_view.add_to_buffer("#{@name} exploded.")
-			$status_view.draw_buffer
-			$monsters.delete(self)
-			
-			$main_view.clear
-			$map.draw($main_view)
-			$items.each {|item| item.draw($main_view)}
-			$player.draw($main_view)
-			$monsters.each {|monster| monster.draw($main_view)}
-			$main_view.refresh
+				i += 1
 		end
 	end
 end
