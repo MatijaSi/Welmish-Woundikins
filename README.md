@@ -1,7 +1,7 @@
 # Welmish Woundikins
 Made using Ruby and Curses.
 
-## I stopped working on this project, so don't except any new updates soon. Feel free to fork it though.
+## I stopped working on this project, so don't expect any new updates soon. Feel free to fork it though.
 
 ### DevBlog:
 http://welmish.blogspot.si/
